@@ -1,0 +1,433 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>Document</title>
+    <style>
+            #world {
+            position: absolute;
+            width: 100%;
+            height: 100%;
+            overflow: hidden;
+            background: linear-gradient(#e4e0ba, #f7d9aa);
+        }
+        #control{
+            position: absolute;
+            z-index: 2;
+            width: 100%;
+            height: 100%;
+            text-align:center;
+        }
+        button{
+            margin-top: 100%;
+            width: 20%;
+            height: 50px;
+        }
+    </style>
+</head>
+<body>
+    <div id="world"></div>
+    <div id="control">
+        <button style="margin-right:150px;" hover="Hover(0);">Left</button>
+        <button >Right</button>
+    </div>
+    <script src="three.min.js"></script>
+    <script src="./loaders/FBXLoader.js"></script>
+    <script src="./ModelCar.js"></script>
+    <script type="x-shader/x-vertex" id="uvoffsetvertex">
+        uniform vec2 offsetUV;
+        varying vec2 vUv;
+        void main() {
+            vUv = uv + offsetUV;
+            gl_Position = projectionMatrix * modelViewMatrix * vec4( position, 1.0 );
+        }
+    </script>
+    <script type="x-shader/x-vertex" id="costomvertex">
+        varying vec2 vUv;
+        void main() {
+            vUv = uv;
+            gl_Position = projectionMatrix * modelViewMatrix * vec4( position, 1.0 );
+        }
+    </script>
+
+    <script type="x-shader/x-fragment" id="costomfragment">
+        varying vec2 vUv;
+        uniform sampler2D ColorMap;
+        void main() {
+            gl_FragColor = texture2D(ColorMap,vUv);
+        }
+    </script>
+    <script>
+        function Hover(t){
+            console.log(t);
+        }
+        var renderer, scene, camera;
+        var HEIGHT, WIDTH;
+        
+        var ROAD_WIDTH=18;
+        var ROAD_HEIGHT=600;
+        var AD_WIDTH=8;
+        var AD_HEIGHT=8;
+        var CAR_WIDTH=2;
+        var CAR_HEIGHT=1;
+        var CAR_DEPTH=4;
+        var AD_DISTANCE=50;
+        //ad
+        var CACHED_START=0;
+        var CACHED_LEFT_AD=0;
+        var CACHED_RIGHT_AD=1;
+        var CACHED_CAR=2;
+        var CACHED_GOLD=3;
+        var CACHED_LEFT_AD2=4;
+        var CACHED_END=5;
+        var CACHED_OBJECT=[];
+        for(var i=CACHED_START;i<CACHED_END;i++){
+            CACHED_OBJECT[i]=[];
+        }
+        //item
+        var ITME_NONE=0;
+        var ITEM_GOLD=1;
+        var ITME_CAR=2;
+        var ITME_LIST={
+            time:1,
+            data:[
+                [ITME_NONE,ITME_CAR,ITME_NONE],
+                [ITEM_GOLD,ITME_NONE,ITME_NONE],
+                [ITEM_GOLD,ITME_NONE,ITME_CAR],
+                [ITEM_GOLD,ITEM_GOLD,ITEM_GOLD],
+                [ITME_CAR,ITEM_GOLD,ITEM_GOLD],
+            ]
+        }
+        //run time data
+        var palyer_car=null;
+        var move_left=false;
+        var move_right=false;
+        var forword_speed=100;
+        var forword_speed_offset=0;
+        var right_left_speed=20;
+        var road_material=null;
+        var road_material_uv_animation_time=0.0;
+        var update_last_time=0;
+        var left_ad_list=[];
+        var item_list=[];
+        var item_refresh_time=0;
+        var item_refresh_index=0;
+        
+        
+        function init(){
+            HEIGHT = window.innerHeight;  
+            WIDTH = window.innerWidth;
+            camera = new THREE.PerspectiveCamera( 80, WIDTH / HEIGHT, 1, 10000 );
+			camera.position.set(0,5,8);
+            camera.rotation.set(0,0,0);
+			scene = new THREE.Scene();
+			//scene.background = new THREE.Color( 0x050505 );
+            renderer = new THREE.WebGLRenderer({ 
+            // 在 css 中设置背景色透明显示渐变色
+                alpha: true, 
+            // 开启抗锯齿，但这样会降低性能。
+            // 不过，由于我们的项目基于低多边形的，那还好 :) 
+                antialias: true 
+            });
+            renderer.setSize(WIDTH, HEIGHT);
+            container = document.getElementById('world');
+            container.appendChild(renderer.domElement);
+        }
+
+        function createRoad(){
+            road_material = {
+                offsetUV:{value:new THREE.Vector2(0,0),type:'v2'},
+                ColorMap:{ value: new THREE.TextureLoader().load( "roadx3.jpg" ) ,type:'t'}
+			};
+            road_material.ColorMap.value.wrapS = road_material.ColorMap.value.wrapT = THREE.RepeatWrapping;
+            
+            var shaderMaterial = new THREE.ShaderMaterial( {
+				uniforms: road_material,
+				vertexShader:document.getElementById('uvoffsetvertex').textContent,
+				fragmentShader: document.getElementById('costomfragment').textContent
+			});
+            //var material = new THREE.MeshBasicMaterial( {color: 0xffff00, side: THREE.DoubleSide} );
+            var geometry = new THREE.PlaneGeometry( ROAD_WIDTH, ROAD_HEIGHT);
+            var plane = new THREE.Mesh( geometry, shaderMaterial );
+            var group = new THREE.Object3D();
+            plane.position.set(0,0,-50);
+            plane.rotation.set(-Math.PI*0.5,0,0);
+
+            group.add( plane );
+            scene.add(group);
+        }
+        
+        function LeftAD(){
+            //costom.ColorMap.value.wrapS = costom.ColorMap.value.wrapT = THREE.RepeatWrapping;
+            var shaderMaterial = new THREE.ShaderMaterial( {
+				uniforms: {
+                    ColorMap:{ value: new THREE.TextureLoader().load( "ad.png" ) ,type:'t'}
+                },
+				vertexShader:document.getElementById('costomvertex').textContent,
+				fragmentShader: document.getElementById('costomfragment').textContent
+			});
+            var geometry = new THREE.PlaneGeometry( AD_WIDTH, AD_HEIGHT, 1,1 );
+            this.plane = new THREE.Mesh( geometry, shaderMaterial );
+            this.mesh = new THREE.Object3D();
+            this.plane.position.set(0,AD_HEIGHT*0.5,0);
+            this.plane.rotation.set(-Math.PI*0.5,Math.PI*0.5,Math.PI*0.5);
+            this.mesh.position.set(-ROAD_WIDTH*0.5,0,-30);
+            this.mesh.add(this.plane);
+        }
+        function RightAD(){
+            //costom.ColorMap.value.wrapS = costom.ColorMap.value.wrapT = THREE.RepeatWrapping;
+            var shaderMaterial = new THREE.ShaderMaterial( {
+				uniforms: {
+                    ColorMap:{ value: new THREE.TextureLoader().load( "09.jpg" ) ,type:'t'}
+                },
+				vertexShader:document.getElementById('costomvertex').textContent,
+				fragmentShader: document.getElementById('costomfragment').textContent
+			});
+            var geometry = new THREE.PlaneGeometry( AD_WIDTH, AD_HEIGHT, 1,1 );
+            this.plane = new THREE.Mesh( geometry, shaderMaterial );
+            this.mesh = new THREE.Object3D();
+            
+            this.plane.position.set(0,AD_HEIGHT*0.5,0);
+            this.plane.rotation.set(-Math.PI*0.5,-Math.PI*0.5,-Math.PI*0.5);
+            this.mesh.add(this.plane);
+            this.mesh.position.set(ROAD_WIDTH*0.5,0,-20);
+            
+        }
+        function LeftAD2(){
+            var shaderMaterial = new THREE.ShaderMaterial( {
+				uniforms: {
+                    ColorMap:{ value: new THREE.TextureLoader().load( "ad.png" ) ,type:'t'}
+                },
+				vertexShader:document.getElementById('costomvertex').textContent,
+				fragmentShader: document.getElementById('costomfragment').textContent
+			});
+            var geometry = new THREE.PlaneGeometry( AD_WIDTH, AD_HEIGHT, 1,1 );
+            this.plane = new THREE.Mesh( geometry, shaderMaterial );
+            this.mesh = new THREE.Object3D();
+            this.plane.position.set(-AD_WIDTH*0.5,AD_HEIGHT*0.5,0);
+            this.plane.rotation.set(0,0,0);
+            this.mesh.position.set(-ROAD_WIDTH*0.5,0,-40);
+            this.mesh.add(this.plane);
+        }
+        function Car(is_player){
+            var shaderMaterial = new THREE.ShaderMaterial( {
+				uniforms: {
+                    ColorMap:{ value: new THREE.TextureLoader().load( "09.jpg" ) ,type:'t'}
+                },
+				vertexShader:document.getElementById('costomvertex').textContent,
+				fragmentShader: document.getElementById('costomfragment').textContent
+			});
+            var geometry = new THREE.BoxGeometry( CAR_WIDTH, CAR_HEIGHT, CAR_DEPTH );
+            this.box = new THREE.Mesh( geometry, shaderMaterial );
+            this.mesh = new THREE.Object3D();
+            
+            this.box.position.set(0,CAR_HEIGHT*0.5,is_player?(-CAR_DEPTH*0.5):(CAR_DEPTH*0.5));
+            this.mesh.add(this.box);
+            this.mesh.position.set(0,0,-10);
+        }
+        function getCarSpeed(){
+            return forword_speed+forword_speed_offset;
+        }
+        function getCachedObject(type){
+            var temp = CACHED_OBJECT[type];
+            if(temp.length>0)return temp.pop();
+            if(type == CACHED_LEFT_AD)return new LeftAD();
+            if(type == CACHED_RIGHT_AD)return new RightAD();
+            if(type == CACHED_LEFT_AD2)return new LeftAD2();
+            if(type == CACHED_CAR) return new Car(false);
+            return null;
+        }
+        function pushCachedObject(type,obj){
+            obj.mesh.visible=false;
+            scene.remove(obj.mesh);
+            CACHED_OBJECT[type].push(obj);
+        }
+        function chekcRunEnd(obj){
+            return obj.mesh.position.z > 10;
+        }
+        Math.lerp=function(a,b,t){
+            return a+(b-a)*t;
+        }
+        function update(frame){
+            //update car
+            if(palyer_car){
+                if(move_left)palyer_car.mesh.position.x -= right_left_speed*frame;
+                if(move_right)palyer_car.mesh.position.x += right_left_speed*frame;
+                palyer_car.mesh.position.x = THREE.Math.clamp(palyer_car.mesh.position.x,-ROAD_WIDTH/3,ROAD_WIDTH/3);
+            }
+            if(forword_speed_offset!=0){
+                forword_speed_offset=Math.lerp(forword_speed_offset,0,0.1);
+            }
+            //update road uv
+            if(road_material){
+                road_material_uv_animation_time += frame;
+                var once_time = ROAD_HEIGHT / forword_speed;
+                var d1 = Math.ceil(road_material_uv_animation_time / once_time);
+                var d2 = road_material_uv_animation_time - d1*once_time;
+                var uv_offset = d2/once_time;
+                road_material.offsetUV.value=new THREE.Vector2(0,uv_offset);
+                
+            }
+            //update left_ad
+            var temp_left_ad_list=[];
+            for(var i=0;i<left_ad_list.length;i++){
+                var ad = left_ad_list[i];
+                ad.mesh.position.z += frame * getCarSpeed();
+                if(chekcRunEnd(ad)){
+                   pushCachedObject(CACHED_LEFT_AD2,ad);
+                }
+                else {
+                    temp_left_ad_list.push(ad);
+                }
+            }
+            left_ad_list = temp_left_ad_list;
+            //create new left ad
+            var create_new_left_ad=left_ad_list.length==0;
+            if(!create_new_left_ad){
+                var ad = left_ad_list[left_ad_list.length-1];
+                if((ROAD_HEIGHT + ad.mesh.position.z)>AD_DISTANCE){
+                    create_new_left_ad =true;
+                }
+            }
+            if(create_new_left_ad){
+                var ad = getCachedObject(CACHED_LEFT_AD2);
+                ad.mesh.visible=true;
+                left_ad_list.push(ad);
+                ad.mesh.position.z=-ROAD_HEIGHT;
+                scene.add(ad.mesh);
+            }
+            //update item
+            var temp_item_list=[];
+            for(var i=0;i<item_list.length;i++){
+                var item = item_list[i];
+                item.mesh.position.z += frame * forword_speed*1.2;
+                if(chekcRunEnd(item)){
+                   pushCachedObject(item.cached_type,item);
+                }
+                else if(Math.abs(item.mesh.position.z-palyer_car.mesh.position.z)<0.5){
+                    pushCachedObject(item.cached_type,item);
+                    forword_speed_offset=-80;
+                }
+                else {
+                    temp_item_list.push(item);
+                }
+            }
+            item_list = temp_item_list;
+            item_refresh_time += frame;
+            if(item_refresh_time>(ITME_LIST.time/ITME_LIST.data.length)){
+                item_refresh_time=0;
+                var group=ITME_LIST.data[item_refresh_index];
+                for(var i=0;i<group.length;i++){
+                    var type=group[i];
+                    if(type == ITME_CAR){
+                        var car = getCachedObject(CACHED_CAR);
+                        car.mesh.position.set((i-1)*ROAD_WIDTH/3,0,-ROAD_HEIGHT);
+                        car.mesh.visible=true;
+                        car.cached_type=CACHED_CAR;
+                        car.type=ITME_CAR;
+                        scene.add(car.mesh);
+                        item_list.push(car);
+                    }
+                }
+                item_refresh_index=(item_refresh_index+1)%ITME_LIST.data.length;
+            }
+
+        }
+        function loop(time){
+            update((time-update_last_time)*0.001);
+            update_last_time=time;
+            // 渲染场景
+            renderer.render(scene, camera);
+            // 重新调用 render() 函数
+            requestAnimationFrame(loop);
+        }
+        function RigisterEvent(){
+            document.addEventListener( 'keydown', onDocumentKeyDown );
+			document.addEventListener( 'keyup', onDocumentKeyUp );
+			document.addEventListener( 'mousedown', onDocumentMouseDown );
+			document.addEventListener( 'mouseup', onDocumentMouseUp );
+			document.addEventListener( 'mousemove', onDocumentMouseMove );
+
+			document.addEventListener( 'touchstart', onDocumentTouchStart );
+			document.addEventListener( 'touchend', onDocumentTouchEnd );
+			document.addEventListener( 'touchmove', onDocumentTouchMove );
+        }
+        function onDocumentTouchStart(event){
+            if(event.clientY>HEIGHT/2){
+                if(event.clientX<WIDTH/2)move_left=true;
+                else move_right=true;
+            }
+        }
+        function onDocumentTouchEnd(event){
+            move_left=false;
+            move_right=false;
+        }
+        function onDocumentTouchMove(event){
+
+        }
+        function onDocumentMouseDown(event){
+            console.log(event);
+            if(event.clientY>HEIGHT/2){
+                if(event.clientX<WIDTH/2)move_left=true;
+                else move_right=true;
+            }
+        }
+        function onDocumentMouseUp(event){
+            //console.log(event);
+            move_left=false;
+            move_right=false;
+        }
+        function onDocumentMouseMove(event){
+            //console.log(event);
+        }
+        function onDocumentKeyDown(event){
+            if(event.key == 'a'){
+                move_left=true;
+            }
+            else if(event.key == 'd'){
+                move_right=true;
+            }
+        }
+        function onDocumentKeyUp(event){
+            if(event.key == 'a'){
+                move_left=false;
+            }
+            else if(event.key == 'd'){
+                move_right=false;
+            }
+        }
+        init();
+        createRoad();
+        palyer_car = new Car(true);
+        scene.add(palyer_car.mesh);
+        RigisterEvent();
+        loop(0);
+        var carmodel=new ModelCar();
+        carmodel.Load("./models/all.fbx",function(model){
+            model=model.clone();
+            scene.remove(palyer_car.mesh);
+            scene.add(model);
+            palyer_car.mesh=model;
+            model.scale.set(0.01,0.01,0.01);
+            model.position.set(0,0,-5);
+            model.rotation.set(0,-Math.PI,0);
+            var shaderMaterial = new THREE.ShaderMaterial( {
+				uniforms: {
+                    ColorMap:{ value: new THREE.TextureLoader().load( "texture/E100_01_D.png" ) ,type:'t'}
+                },
+				vertexShader:document.getElementById('costomvertex').textContent,
+				fragmentShader: document.getElementById('costomfragment').textContent
+            });
+            
+            model.traverse( function ( child ) {
+                if ( child.isMesh ) {
+                    if(child.name != "pPlane1")child.material=shaderMaterial;
+                    child.castShadow = true;
+                    child.receiveShadow = true;
+                }
+            } );
+        })
+    </script>
+</body>
+</html>
