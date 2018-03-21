@@ -317,25 +317,7 @@
             // this.mesh.add(this.plane);
             return mesh;
         }
-        function RightAD(){
-            //costom.ColorMap.value.wrapS = costom.ColorMap.value.wrapT = THREE.RepeatWrapping;
-            var shaderMaterial = new THREE.ShaderMaterial( {
-				uniforms: {
-                    ColorMap:{ value: new THREE.TextureLoader().load( "09.jpg" ) ,type:'t'}
-                },
-				vertexShader:document.getElementById('costomvertex').textContent,
-				fragmentShader: document.getElementById('costomfragment').textContent
-			});
-            var geometry = new THREE.PlaneGeometry( AD_WIDTH, AD_HEIGHT, 1,1 );
-            this.plane = new THREE.Mesh( geometry, shaderMaterial );
-            this.mesh = new THREE.Object3D();
-            
-            this.plane.position.set(0,AD_HEIGHT*0.5,0);
-            this.plane.rotation.set(-Math.PI*0.5,-Math.PI*0.5,-Math.PI*0.5);
-            this.mesh.add(this.plane);
-            this.mesh.position.set(ROAD_WIDTH*0.5,0,-20);
-            
-        }
+        
 
         function getCarSpeed(){
             return forword_speed+forword_speed_offset;
