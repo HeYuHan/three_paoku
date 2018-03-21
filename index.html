@@ -74,14 +74,14 @@
         var renderer, scene, camera;
         var HEIGHT, WIDTH;
         
-        var ROAD_WIDTH=18;
+        var ROAD_WIDTH=14;
         var ROAD_HEIGHT=600;
-        var AD_WIDTH=8;
-        var AD_HEIGHT=8;
+        var AD_WIDTH=30;
+        var AD_HEIGHT=20;
         var CAR_WIDTH=2;
         var CAR_HEIGHT=1;
         var CAR_DEPTH=4;
-        var AD_DISTANCE=50;
+        var AD_DISTANCE=80;
         //ad
         var CACHED_START=0;
         var CACHED_LEFT_AD=0;
@@ -112,7 +112,7 @@
         var palyer_car=null;
         var move_left=false;
         var move_right=false;
-        var forword_speed=100;
+        var forword_speed=50;
         var forword_speed_offset=0;
         var right_left_speed=20;
         var road_material=null;
@@ -128,8 +128,8 @@
             HEIGHT = window.innerHeight;  
             WIDTH = window.innerWidth;
             camera = new THREE.PerspectiveCamera( 60, WIDTH / HEIGHT, 1, 10000 );
-			camera.position.set(0,10,15);
-            camera.rotation.set(Math.PI*0.02,0,0);
+			camera.position.set(0,10,8);
+            camera.rotation.set(0,0,0);
 			scene = new THREE.Scene();
 			//scene.background = new THREE.Color( 0x050505 );
             renderer = new THREE.WebGLRenderer({ 
@@ -211,7 +211,7 @@
         function LeftAD2(){
             var shaderMaterial = new THREE.ShaderMaterial( {
 				uniforms: {
-                    ColorMap:{ value: new THREE.TextureLoader().load( "ad.png" ) ,type:'t'}
+                    ColorMap:{ value: new THREE.TextureLoader().load( "texture/left/left_a.png" ) ,type:'t'}
                 },
 				vertexShader:document.getElementById('costomvertex').textContent,
 				fragmentShader: document.getElementById('costomfragment').textContent,
@@ -224,9 +224,9 @@
             var geometry = new THREE.PlaneGeometry( AD_WIDTH, AD_HEIGHT, 1,1 );
             this.plane = new THREE.Mesh( geometry, shaderMaterial );
             this.mesh = new THREE.Object3D();
-            this.plane.position.set(-AD_WIDTH*0.5,AD_HEIGHT*0.5,0);
+            this.plane.position.set(-AD_WIDTH*0.5,0,0);
             this.plane.rotation.set(0,0,0);
-            this.mesh.position.set(-ROAD_WIDTH*0.5,0,-40);
+            this.mesh.position.set(-ROAD_WIDTH*0.5,5,-40);
             this.mesh.add(this.plane);
         }
         function Car(is_player){
