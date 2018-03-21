@@ -81,7 +81,7 @@
         var CAR_WIDTH=2;
         var CAR_HEIGHT=1;
         var CAR_DEPTH=4;
-        var AD_DISTANCE=80;
+        var AD_DISTANCE=50;
         //ad
         var CACHED_START=0;
         var CACHED_LEFT_AD=0;
@@ -112,7 +112,7 @@
         var palyer_car=null;
         var move_left=false;
         var move_right=false;
-        var forword_speed=50;
+        var forword_speed=100;
         var forword_speed_offset=0;
         var right_left_speed=20;
         var road_material=null;
@@ -128,8 +128,8 @@
             HEIGHT = window.innerHeight;  
             WIDTH = window.innerWidth;
             camera = new THREE.PerspectiveCamera( 60, WIDTH / HEIGHT, 1, 10000 );
-			camera.position.set(0,10,8);
-            camera.rotation.set(0,0,0);
+			camera.position.set(0,5,0);
+            camera.rotation.set(-Math.PI*0.1,0,0);
 			scene = new THREE.Scene();
 			//scene.background = new THREE.Color( 0x050505 );
             renderer = new THREE.WebGLRenderer({ 
@@ -226,7 +226,7 @@
             this.mesh = new THREE.Object3D();
             this.plane.position.set(-AD_WIDTH*0.5,0,0);
             this.plane.rotation.set(0,0,0);
-            this.mesh.position.set(-ROAD_WIDTH*0.5,5,-40);
+            this.mesh.position.set(-ROAD_WIDTH*0.5,0,-40);
             this.mesh.add(this.plane);
         }
         function Car(is_player){
