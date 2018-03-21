@@ -37,15 +37,24 @@
     <script src="./ModelCar.js"></script>
     <script type="x-shader/x-vertex" id="uvoffsetvertex">
         uniform vec2 offsetUV;
+        uniform vec2 scaleUV;
+        uniform vec2 mapSize;
         varying vec2 vUv;
         void main() {
-            vUv = uv + offsetUV;
+            vUv = uv;
+            vec2 offset = offsetUV;
+            offset.x *= scaleUV.x/mapSize.x;
+            offset.y *= scaleUV.y/mapSize.y;
+            vUv.x *= scaleUV.x;
+            vUv.y *= scaleUV.y;
+            vUv += offset;
             gl_Position = projectionMatrix * modelViewMatrix * vec4( position, 1.0 );
         }
     </script>
     <script type="x-shader/x-vertex" id="costomvertex">
         varying vec2 vUv;
         void main() {
+            
             vUv = uv;
             gl_Position = projectionMatrix * modelViewMatrix * vec4( position, 1.0 );
         }
@@ -118,9 +127,9 @@
         function init(){
             HEIGHT = window.innerHeight;  
             WIDTH = window.innerWidth;
-            camera = new THREE.PerspectiveCamera( 80, WIDTH / HEIGHT, 1, 10000 );
-			camera.position.set(0,5,8);
-            camera.rotation.set(0,0,0);
+            camera = new THREE.PerspectiveCamera( 60, WIDTH / HEIGHT, 1, 10000 );
+			camera.position.set(0,10,15);
+            camera.rotation.set(Math.PI*0.02,0,0);
 			scene = new THREE.Scene();
 			//scene.background = new THREE.Color( 0x050505 );
             renderer = new THREE.WebGLRenderer({ 
@@ -137,6 +146,8 @@
 
         function createRoad(){
             road_material = {
+                mapSize:{value:new THREE.Vector2(1,1)},
+                scaleUV:{value:new THREE.Vector2(1,10)},
                 offsetUV:{value:new THREE.Vector2(0,0),type:'v2'},
                 ColorMap:{ value: new THREE.TextureLoader().load( "roadx3.jpg" ) ,type:'t'}
 			};
@@ -398,28 +409,29 @@
             }
         }
         init();
-        createRoad();
+        //createRoad();
         palyer_car = new Car(true);
         scene.add(palyer_car.mesh);
         RigisterEvent();
         loop(0);
         var carmodel=new ModelCar();
-        carmodel.Load("./models/all.fbx",function(model){
-            model=model.clone();
-            scene.remove(palyer_car.mesh);
+        carmodel.Load("./models/road/dx_005.fbx",function(model){
             scene.add(model);
-            palyer_car.mesh=model;
-            model.scale.set(0.01,0.01,0.01);
+            model.scale.set(1,1,ROAD_HEIGHT/5);
             model.position.set(0,0,-5);
             model.rotation.set(0,-Math.PI,0);
             var shaderMaterial = new THREE.ShaderMaterial( {
 				uniforms: {
-                    ColorMap:{ value: new THREE.TextureLoader().load( "texture/E100_01_D.png" ) ,type:'t'}
+                    mapSize:{value:new THREE.Vector2(1,5)},
+                    scaleUV:{value:new THREE.Vector2(1,ROAD_HEIGHT/5)},
+                    offsetUV:{value:new THREE.Vector2(0,0),type:'v2'},
+                    ColorMap:{ value: new THREE.TextureLoader().load( "./texture/road/dx_001.png" ) ,type:'t'}
                 },
-				vertexShader:document.getElementById('costomvertex').textContent,
+				vertexShader:document.getElementById('uvoffsetvertex').textContent,
 				fragmentShader: document.getElementById('costomfragment').textContent
             });
-            
+            shaderMaterial.uniforms.ColorMap.value.wrapS = shaderMaterial.uniforms.ColorMap.value.wrapT = THREE.RepeatWrapping;
+            road_material=shaderMaterial.uniforms;
             model.traverse( function ( child ) {
                 if ( child.isMesh ) {
                     if(child.name != "pPlane1")child.material=shaderMaterial;
