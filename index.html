@@ -137,9 +137,12 @@
                 alpha: true, 
             // 开启抗锯齿，但这样会降低性能。
             // 不过，由于我们的项目基于低多边形的，那还好 :) 
-                antialias: true 
+                antialias: true ,
+                precision: 'highp'
             });
+            renderer.setPixelRatio(window.devicePixelRatio);
             renderer.setSize(WIDTH, HEIGHT);
+            var size= renderer.getSize();
             container = document.getElementById('world');
             container.appendChild(renderer.domElement);
         }
@@ -211,8 +214,13 @@
                     ColorMap:{ value: new THREE.TextureLoader().load( "ad.png" ) ,type:'t'}
                 },
 				vertexShader:document.getElementById('costomvertex').textContent,
-				fragmentShader: document.getElementById('costomfragment').textContent
+				fragmentShader: document.getElementById('costomfragment').textContent,
+                transparent:true
 			});
+            var texture0 = shaderMaterial.uniforms.ColorMap.value;
+            //texture0.generateMipmaps = false; 
+            texture0.magFilter = THREE.LinearFilter; 
+            texture0.minFilter = THREE.LinearFilter; 
             var geometry = new THREE.PlaneGeometry( AD_WIDTH, AD_HEIGHT, 1,1 );
             this.plane = new THREE.Mesh( geometry, shaderMaterial );
             this.mesh = new THREE.Object3D();
@@ -318,7 +326,7 @@
                 }
                 else if(Math.abs(item.mesh.position.z-palyer_car.mesh.position.z)<0.5){
                     pushCachedObject(item.cached_type,item);
-                    forword_speed_offset=-80;
+                    //forword_speed_offset=-80;
                 }
                 else {
                     temp_item_list.push(item);
@@ -425,12 +433,16 @@
                     mapSize:{value:new THREE.Vector2(1,5)},
                     scaleUV:{value:new THREE.Vector2(1,ROAD_HEIGHT/5)},
                     offsetUV:{value:new THREE.Vector2(0,0),type:'v2'},
-                    ColorMap:{ value: new THREE.TextureLoader().load( "./texture/road/dx_001.png" ) ,type:'t'}
+                    ColorMap:{ value: new THREE.TextureLoader().load( "./texture/road/dx_001_min.png" ) ,type:'t'}
                 },
 				vertexShader:document.getElementById('uvoffsetvertex').textContent,
 				fragmentShader: document.getElementById('costomfragment').textContent
             });
             shaderMaterial.uniforms.ColorMap.value.wrapS = shaderMaterial.uniforms.ColorMap.value.wrapT = THREE.RepeatWrapping;
+            var texture0 = shaderMaterial.uniforms.ColorMap.value;
+            //texture0.generateMipmaps = false; 
+            texture0.magFilter = THREE.LinearFilter; 
+            texture0.minFilter = THREE.LinearFilter; 
             road_material=shaderMaterial.uniforms;
             model.traverse( function ( child ) {
                 if ( child.isMesh ) {
