@@ -637,6 +637,7 @@
                 && Math.abs(palyer_car.position.z - item.position.z)<GameResConfig.m_Car.m_Height){
                     //pushCachedObject(item);
                     forword_speed-=GameConfig.m_CarCrashSpeedOffset;
+                    forword_speed=Math.max(forword_speed,0);
                     item.m_SpeedOffset=GameConfig.m_CarCrashSpeedOffset;
                 }
             }
