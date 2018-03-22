@@ -422,11 +422,11 @@
             var model = new THREE.Mesh( geometry, shaderMaterial );
             mesh.add(model);
             if(building.m_Position == PositionType.Left){
-                model.position.set(building.m_PositionOffset[0]-width*0.5,building.m_PositionOffset[1]+height*0.2,building.m_PositionOffset[2]);
+                model.position.set(building.m_PositionOffset[0]-width*0.5,building.m_PositionOffset[1]+height*0.5,building.m_PositionOffset[2]);
                 mesh.position.set(-GameConfig.m_RoadWidth*0.5,-5,-60);
             }
             else if(building.m_Position == PositionType.Right){
-                model.position.set(building.m_PositionOffset[0]+width*0.5,building.m_PositionOffset[1]+height*0.2,building.m_PositionOffset[2]);
+                model.position.set(building.m_PositionOffset[0]+width*0.5,building.m_PositionOffset[1]+height*0.5,building.m_PositionOffset[2]);
                 mesh.position.set(GameConfig.m_RoadWidth*0.5,-5,-60);
             }
             return mesh;
