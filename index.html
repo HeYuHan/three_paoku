@@ -29,8 +29,9 @@
 <body>
     <div id="world"></div>
     <div id="control">
-        <button style="margin-right:150px;" hover="Hover(0);">Left</button>
-        <button >Right</button>
+        <input id="buildingarg"><a style="width:100px;height:22px;" href="#" onclick="ParseBuildArg()">解析建筑</a>
+        <!-- <button style="margin-right:150px;" hover="Hover(0);">Left</button>
+        <button >Right</button> -->
     </div>
     <script src="three.min.js"></script>
     <script src="./loaders/FBXLoader.js"></script>
@@ -68,6 +69,13 @@
         }
     </script>
     <script>
+        //tools
+        /////////////////////////////////////////////////////////////////////////////////////////////
+        function ParseBuildArg(){
+            var arg = document.getElementById('buildingarg').value;
+            alert(arg);
+            GameResConfig.m_Buildings=JSON.parse(arg);
+        }
         ///////////////////////////////////////////////////////////////////////////////////////////
         var ResourceCachedList={};
         function LoadModel(src,callback){
@@ -653,9 +661,9 @@
         function RigisterEvent(){
             document.addEventListener( 'keydown', onDocumentKeyDown );
 			document.addEventListener( 'keyup', onDocumentKeyUp );
-			document.addEventListener( 'mousedown', onDocumentMouseDown );
-			document.addEventListener( 'mouseup', onDocumentMouseUp );
-			document.addEventListener( 'mousemove', onDocumentMouseMove );
+			// document.addEventListener( 'mousedown', onDocumentMouseDown );
+			// document.addEventListener( 'mouseup', onDocumentMouseUp );
+			// document.addEventListener( 'mousemove', onDocumentMouseMove );
 
 			document.addEventListener( 'touchstart', onDocumentTouchStart );
 			document.addEventListener( 'touchend', onDocumentTouchEnd );
