@@ -117,7 +117,7 @@
                 m_Texture:"res/texture/background.png",
                 m_Width:500,
                 m_Height:800,
-                m_PositionOffset:[0,15,0]
+                m_PositionOffset:[0,-60,0]
             },
             m_Road:{
                 m_Model:"res/models/road/dx_005.fbx",
@@ -139,28 +139,137 @@
                 m_Texture:"res/texture/item/gold.jpg",
                 m_Size:4
             },
-            m_Buildings:[
-                {
-                    m_Type:BuildingType.AD,
-                    m_Position:PositionType.Left,
-                    m_Texture:"res/texture/building/left_a.png",
-                    m_Width:30,
-                    m_Height:20
-                },
-                {
-                    m_Type:BuildingType.AD,
-                    m_Position:PositionType.Right,
-                    m_Texture:"res/texture/building/right_a.png",
-                    m_Width:30,
-                    m_Height:20
-                }
-            ]
+            m_Buildings:{
+                m_Scale:0.05,
+                m_Data:[
+                    {
+                        m_Type:BuildingType.AD,
+                        m_Position:PositionType.Left,
+                        m_Texture:"res/texture/building/l_b01.png",
+                        m_Width:256,
+                        m_Height:310,
+                        m_PositionOffset:[0,0,0]
+                    },
+                    {
+                        m_Type:BuildingType.AD,
+                        m_Position:PositionType.Left,
+                        m_Texture:"res/texture/building/l_b02.png",
+                        m_Width:277,
+                        m_Height:1112,
+                        m_PositionOffset:[0,0,0]
+                    },
+                    {
+                        m_Type:BuildingType.AD,
+                        m_Position:PositionType.Left,
+                        m_Texture:"res/texture/building/l_b03.png",
+                        m_Width:545,
+                        m_Height:428,
+                        m_PositionOffset:[0,0,0]
+                    },
+                    {
+                        m_Type:BuildingType.AD,
+                        m_Position:PositionType.Left,
+                        m_Texture:"res/texture/building/l_b04.png",
+                        m_Width:472,
+                        m_Height:651,
+                        m_PositionOffset:[0,0,0]
+                    },
+                    {
+                        m_Type:BuildingType.AD,
+                        m_Position:PositionType.Left,
+                        m_Texture:"res/texture/building/l_b05.png",
+                        m_Width:307,
+                        m_Height:693,
+                        m_PositionOffset:[0,0,0]
+                    },
+                    {
+                        m_Type:BuildingType.AD,
+                        m_Position:PositionType.Left,
+                        m_Texture:"res/texture/building/l_b06.png",
+                        m_Width:378,
+                        m_Height:293,
+                        m_PositionOffset:[0,0,0]
+                    },
+                    {
+                        m_Type:BuildingType.AD,
+                        m_Position:PositionType.Left,
+                        m_Texture:"res/texture/building/l_b07.png",
+                        m_Width:250,
+                        m_Height:585,
+                        m_PositionOffset:[0,0,0]
+                    },
+                    {
+                        m_Type:BuildingType.AD,
+                        m_Position:PositionType.Left,
+                        m_Texture:"res/texture/building/l_b08.png",
+                        m_Width:220,
+                        m_Height:740,
+                        m_PositionOffset:[0,0,0]
+                    },
+                    {
+                        m_Type:BuildingType.AD,
+                        m_Position:PositionType.Left,
+                        m_Texture:"res/texture/building/l_b09.png",
+                        m_Width:314,
+                        m_Height:680,
+                        m_PositionOffset:[0,0,0]
+                    },
+                    {
+                        m_Type:BuildingType.AD,
+                        m_Position:PositionType.Right,
+                        m_Texture:"res/texture/building/r_b01.png",
+                        m_Width:413,
+                        m_Height:359,
+                        m_PositionOffset:[0,0,0]
+                    },
+                    {
+                        m_Type:BuildingType.AD,
+                        m_Position:PositionType.Right,
+                        m_Texture:"res/texture/building/r_b02.png",
+                        m_Width:321,
+                        m_Height:375,
+                        m_PositionOffset:[0,0,0]
+                    },
+                    {
+                        m_Type:BuildingType.AD,
+                        m_Position:PositionType.Right,
+                        m_Texture:"res/texture/building/r_b03.png",
+                        m_Width:472,
+                        m_Height:413,
+                        m_PositionOffset:[0,0,0]
+                    },
+                    {
+                        m_Type:BuildingType.AD,
+                        m_Position:PositionType.Right,
+                        m_Texture:"res/texture/building/r_b04.png",
+                        m_Width:338,
+                        m_Height:598,
+                        m_PositionOffset:[0,0,0]
+                    },
+                    {
+                        m_Type:BuildingType.AD,
+                        m_Position:PositionType.Right,
+                        m_Texture:"res/texture/building/r_b05.png",
+                        m_Width:264,
+                        m_Height:1170,
+                        m_PositionOffset:[0,0,0]
+                    },
+                    {
+                        m_Type:BuildingType.AD,
+                        m_Position:PositionType.Right,
+                        m_Texture:"res/texture/building/r_b06.png",
+                        m_Width:246,
+                        m_Height:701,
+                        m_PositionOffset:[0,0,0]
+                    }
+                ]
+            }
         }
         ///////////////////////////////////////////////////////////////////////////////////////
         var GameConfig={
             m_RoadLength:500,
             m_RoadWidth:14,
-            m_ADDistance:50,
+            m_BuildingDistance:10,
             m_EnemyCarSpeed:50,
             m_CarMaxSpeed:200,
             m_CarHorizontalSpeed:10,
@@ -291,7 +400,9 @@
         }
         function createBuilding(building){
             var mesh = new THREE.Object3D();
-            var geometry = new THREE.PlaneGeometry( building.m_Width, building.m_Height, 1,1 );
+            var width=GameResConfig.m_Buildings.m_Scale*building.m_Width;
+            var height=GameResConfig.m_Buildings.m_Scale*building.m_Height;
+            var geometry = new THREE.PlaneGeometry( width, height, 1,1 );
             var shaderMaterial = new THREE.ShaderMaterial({
                 uniforms: {
                     ColorMap: { value: LoadTexture(building.m_Texture) }
@@ -303,11 +414,11 @@
             var model = new THREE.Mesh( geometry, shaderMaterial );
             mesh.add(model);
             if(building.m_Position == PositionType.Left){
-                model.position.set(-building.m_Width*0.5,building.m_Height*0.5,0);
+                model.position.set(building.m_PositionOffset[0]-width*0.5,building.m_PositionOffset[1]+height*0.2,building.m_PositionOffset[2]);
                 mesh.position.set(-GameConfig.m_RoadWidth*0.5,-5,-60);
             }
             else if(building.m_Position == PositionType.Right){
-                model.position.set(building.m_Width*0.5,building.m_Height*0.5,0);
+                model.position.set(building.m_PositionOffset[0]+width*0.5,building.m_PositionOffset[1]+height*0.2,building.m_PositionOffset[2]);
                 mesh.position.set(GameConfig.m_RoadWidth*0.5,-5,-60);
             }
             return mesh;
@@ -400,13 +511,14 @@
             var create_new_left_ad=left_ad_list.length==0;
             if(!create_new_left_ad){
                 var ad = left_ad_list[left_ad_list.length-1];
-                if((GameConfig.m_RoadLength + ad.position.z)>GameConfig.m_ADDistance){
+                if((GameConfig.m_RoadLength + ad.position.z)>GameConfig.m_BuildingDistance){
                     create_new_left_ad =true;
                 }
             }
             if(create_new_left_ad){
+                var index = parseInt(Math.random()*GameResConfig.m_Buildings.m_Data.length);
                 var cache_data={
-                    m_Res:GameResConfig.m_Buildings[0],
+                    m_Res:GameResConfig.m_Buildings.m_Data[index],
                     m_Type:CacheType.Building,
                     
                 }
