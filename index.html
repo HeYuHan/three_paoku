@@ -179,14 +179,14 @@
                 m_PositionOffset: [0, -60, 0]
             },
             m_Road: {
-                m_Model: "res/models/road/dx_005.fbx",
-                m_Texture: "res/texture/road/dx_001_min.png",
+                m_Model: "res/models/road/sa_0323.fbx",
+                m_Texture: "res/texture/road/sa_0323.png",
                 m_Width: 14,
                 m_Height: 5
             },
             m_Car: {
-                m_Model: "res/models/car/player_car.fbx",
-                m_Texture: "res/texture/car/player_car.png",
+                m_Model: "res/models/car/caimeirei.fbx",
+                m_Texture: "res/texture/car/cameirei_D.tga",
                 m_Width: 2,
                 m_Height: 4
             },
@@ -327,7 +327,8 @@
         ///////////////////////////////////////////////////////////////////////////////////////
         var GameConfig = {
             m_RoadLength: 500,
-            m_RoadWidth: 14,
+            m_RoadWidth: 10,
+            m_RoadExpandWidth:16,
             m_BuildingDistance: 10,
             m_EnemyCarSpeed: 100,
             m_CarMaxSpeed: 200,
@@ -433,7 +434,8 @@
                 group.add(model);
                 scene.add(group);
                 model.scale.set(1, 1, scale);
-                model.position.set(0, 0, -GameConfig.m_RoadLength);
+                model.rotation.set(0, -Math.PI, 0);
+                model.position.set(0, 0, GameConfig.m_RoadLength);
             });
         }
         function createCar(src, clone_mode) {
@@ -454,8 +456,7 @@
                     }
                 });
                 mesh.add(model);
-                model.rotation.set(0, -Math.PI, 0);
-                model.scale.set(0.01, 0.01, 0.01);
+                model.rotation.set(0, -Math.PI*0.5, 0);
             });
             return mesh;
         }
@@ -476,11 +477,15 @@
             mesh.add(model);
             if (building.m_Position == PositionType.Left) {
                 model.position.set(building.m_PositionOffset[0] - width * 0.5, building.m_PositionOffset[1] + height * 0.5, building.m_PositionOffset[2]);
-                mesh.position.set(-GameConfig.m_RoadWidth * 0.5, -5, -60);
+                mesh.position.set(-GameConfig.m_RoadExpandWidth * 0.5, 0, -60);
             }
             else if (building.m_Position == PositionType.Right) {
                 model.position.set(building.m_PositionOffset[0] + width * 0.5, building.m_PositionOffset[1] + height * 0.5, building.m_PositionOffset[2]);
-                mesh.position.set(GameConfig.m_RoadWidth * 0.5, -5, -60);
+                mesh.position.set(GameConfig.m_RoadExpandWidth * 0.5, -5, -60);
+            }
+            else if (building.m_Position == PositionType.Center) {
+                model.position.set(0, building.m_PositionOffset[1] + height * 0.5, building.m_PositionOffset[2]);
+                mesh.position.set(GameConfig.m_RoadExpandWidth * 0.5, 0, -60);
             }
             return mesh;
         }
@@ -729,8 +734,8 @@
             requestAnimationFrame(loop);
         }
         function RigisterEvent() {
-            //document.addEventListener( 'keydown', onDocumentKeyDown );
-            //document.addEventListener( 'keyup', onDocumentKeyUp );
+            document.addEventListener( 'keydown', onDocumentKeyDown );
+            document.addEventListener( 'keyup', onDocumentKeyUp );
             // document.addEventListener( 'mousedown', onDocumentMouseDown );
             // document.addEventListener( 'mouseup', onDocumentMouseUp );
             // document.addEventListener( 'mousemove', onDocumentMouseMove );
