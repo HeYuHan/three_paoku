@@ -3,6 +3,7 @@
 
 <head>
     <meta charset="UTF-8">
+    <meta name="flexible" content="maximum-dpr=3" />
     <meta name="viewport" content="width=device-width, initial-scale=1.0">
     <title>Document</title>
     <style>
@@ -23,24 +24,23 @@
             z-index: 2;
             width: 100%;
             height: 100%;
-            text-align: center;
+            overflow: hidden;
         }
 
         /* button{
             margin-top: 100%;
             width: 20%;
-            height: 50px;
+            height: 50.004px;
         } */
 
         .move {
             position: absolute;
             width: 20%;
-            height: 25px;
-            line-height: 25px;
-            font-size: 20px;
-            bottom: 10%;
+            height: 0.6315rem;
+            line-height: 0.2315rem;
+            font-size: 0.1852rem;
+            bottom: 20%;
             background-color: #fff;
-
             -webkit-touch-callout: none;
             -webkit-user-select: none;
             -khtml-user-select: none;
@@ -56,16 +56,128 @@
         .right {
             right: 10%;
         }
+
+        .score_box {
+            display: flex;
+            display: -webkit-box;
+            display: -webkit-flex;
+            width: 3.6111rem;
+            height: 1.0185rem;
+            margin-left: 0.1111rem;
+            margin-top: 0.2222rem;
+        }
+
+        .icon {
+            width: 0.9722rem;
+            height: 0.9722rem;
+            margin-top: 0.0231rem;
+        }
+
+        .num {
+            width: 3.3333rem;
+            height: 0.7407rem;
+            line-height: 0.7407rem;
+            margin-top: 0.1157rem;
+            margin-left: -0.7056rem;
+            text-align: center;
+            font-size: 0.4259rem;
+            border-radius: 0.1481rem;
+            background-color: #434343;
+            border: 0.0556rem solid #fff;
+            z-index: -1;
+            color: #fff;
+        }
+
+        .score {
+            width: 3.6111rem;
+            height: 0.5556rem;
+            line-height: 0.5556rem;
+            font-size: 0.5185rem;
+            color: #3c1c18;
+            text-indent: 0.2778rem;
+            margin-top: 0.3889rem;
+        }
+
+        .distance {
+            position: absolute;
+            width: 3.4259rem;
+            height: 0.6481rem;
+            line-height: 0.6481rem;
+            left: 4.1667rem;
+            top: 0.3333rem;
+            font-size: 0.6296rem;
+            text-align: center;
+            color: #fff;
+        }
+
+        .pause {
+            position: absolute;
+            width: 1.0833rem;
+            height: 1.0833rem;
+            top: 0.1389rem;
+            right: 0.3241rem;
+        }
+
+        .oil_box {
+            display: flex;
+            display: -webkit-box;
+            display: -webkit-flex;
+            position: absolute;
+            width: 6.9722rem;
+            height: 0.8796rem;
+            margin-left: 1.4491rem;
+            bottom: 0.8148rem;
+            border: 0.047rem solid #a0a0a0;
+            border-radius: 0.2407rem;
+            background-image: url(res/texture/gaming/youliang01.png);
+            background-size: 100% 100%;
+            background-repeat: no-repeat;
+            background-color: #a0a0a0;
+        }
+
+
+        .oil_icon {
+            width: 0.7407rem;
+            height: 0.6389rem;
+            margin-left: 1.8519rem;
+            margin-top: 0.1204rem;
+        }
+
+        .oil_num {
+            width: 2.3148rem;
+            margin-left: 0.1852rem;
+            line-height: 0.8796rem;
+            font-size: 0.5185rem;
+            text-align: center;
+            color: #fff;
+        }
     </style>
+    <script src="http://g.tbcdn.cn/mtb/lib-flexible/0.3.2/??flexible_css.js,flexible.js"></script>
 </head>
 
 <body>
     <div id="world"></div>
     <div id="control">
         <input id="buildingarg">
-        <a style="width:100px;height:22px;" href="#" onclick="ParseBuildArg()">解析建筑</a>
-        <!-- <button style="margin-right:150px;" hover="Hover(0);">Left</button>
-        <button >Right</button> -->
+        <button style="width:99.9972px;height:21.9996px;" onclick="ParseBuildArg()">解析建筑</button>
+        <div class="score_box glod">
+            <img src="res/texture/gaming/coin_num.png" class="icon">
+            <p class="num glod_num">0</p>
+        </div>
+        <div class="score_box enery">
+            <img src="res/texture/gaming/energy_num.png" class="icon">
+            <p class="num enery_num">0</p>
+        </div>
+        <p class="score score_num">得分：0</p>
+        <p class="distance distance_num">0米</p>
+        <img src="res/texture/gaming/zt.png" class="pause" onclick="zt()">
+        <div class="oil_box">
+
+            <img src="res/texture/gaming/youliangi03.png" class="oil_icon">
+            <p class="oil_num">100 / 100</p>
+
+        </div>
+
         <div class="move left"></div>
         <div class="move right"></div>
     </div>
@@ -110,8 +222,19 @@
         function ParseBuildArg() {
             var arg = document.getElementById('buildingarg').value;
             alert(arg);
-            GameResConfig.m_Buildings = JSON.parse(arg);
+            var json = JSON.parse(arg);
+            for(let key in json){
+                if(key != 'key'){
+                    window[json.key][key] = json[key];
+                }
+            }
+            
+
         }
+        function zt() {
+            move_forword = !move_forword;
+        }
+
         ///////////////////////////////////////////////////////////////////////////////////////////
         var ResourceCachedList = {};
         var ResourceCallbakList = {};
@@ -169,7 +292,9 @@
         var ItemType = {
             None: 0,
             Gold: 1,
-            Car: 2
+            Car: 2,
+            Accelerate: 3,
+            Oil:4,
         }
         var GameResConfig = {
             m_Background: {
@@ -179,14 +304,14 @@
                 m_PositionOffset: [0, -60, 0]
             },
             m_Road: {
-                m_Model: "res/models/road/dx_005.fbx",
-                m_Texture: "res/texture/road/dx_001_min.png",
+                m_Model: "res/models/road/sa_0323.fbx",
+                m_Texture: "res/texture/road/sa_0323.png",
                 m_Width: 14,
                 m_Height: 5
             },
             m_Car: {
-                m_Model: "res/models/car/player_car.fbx",
-                m_Texture: "res/texture/car/player_car.png",
+                m_Model: "res/models/car/caimeirei.fbx",
+                m_Texture: "res/texture/car/cameirei_D.jpg",
                 m_Width: 2,
                 m_Height: 4
             },
@@ -195,9 +320,16 @@
             ],
             m_Gold: {
                 m_Type: ItemType.Gold,
-                m_Texture: "res/texture/item/gold.jpg",
-                m_Size: 4
+                m_Texture: "res/texture/item/gold.png",
+                m_Size: 1
             },
+
+            m_Oil: {
+                m_Type: ItemType.Oil,
+                m_Texture: "res/texture/item/oil.png",
+                m_Size: 1
+            },
+
             m_Buildings: {
                 m_Scale: 0.05,
                 m_Data: [
@@ -327,7 +459,8 @@
         ///////////////////////////////////////////////////////////////////////////////////////
         var GameConfig = {
             m_RoadLength: 500,
-            m_RoadWidth: 14,
+            m_RoadWidth: 10,
+            m_RoadExpandWidth: 16,
             m_BuildingDistance: 10,
             m_EnemyCarSpeed: 100,
             m_CarMaxSpeed: 200,
@@ -335,8 +468,9 @@
             m_CarAcceleration: 100,
             m_CarPosition: [0, 0, -33],
             m_CameraPosition: [0, 5, -10],
-            m_CarCrashSpeedOffset: 20,
-            m_CarRoadCount: 3
+            m_CarCrashSpeedOffset: 100,
+            m_CarRoadCount: 3,
+            m_MaxOil : 100,
 
         }
         ///////////////////////////////////////////////////////////////////////////////////////////
@@ -347,23 +481,69 @@
                 [ItemType.None, ItemType.Car, ItemType.None],
                 [ItemType.Gold, ItemType.None, ItemType.Gold],
                 [ItemType.Gold, ItemType.Car, ItemType.None],
+                [ItemType.Gold, ItemType.Gold, ItemType.None],
                 [ItemType.Car, ItemType.None, ItemType.Gold],
-                [ItemType.Gold, ItemType.None, ItemType.Car]
-            ]
+                [ItemType.Gold, ItemType.Gold, ItemType.None],
+                [ItemType.Gold, ItemType.Oil, ItemType.Car]
+            ],
+            car_index:0
+
         }
         /////////////////////////////////////////////////////////////////////////////////////////////////
         var CacheType = {
             Building: 1,
             Gold: 2,
             Car: 3,
+            Accelerate: 4,
+            Oil:5,
         }
 
         var CACHED_OBJECT = [];
 
+        var PlayScoreCofing = {
+            //最大油量
+            oil:100,
+            //行进距离
+            distance: 1,
+            //邮箱加油
+            oil_add:20,
 
+            //油量随里程减少 1/km
+            oil_cut: 100,
+            //金币加能量
+            goldToEnergy: 2,
+            //闪避加能量
+            dodgeToEnergy: 1,
+            //闪避连击加能量
+            dodgeComboToEnergy: 1,
+            //碰撞减速
+            collide: 50,
+            //碰撞减少油量
+            collideOil: 10,
+            //复活次数
+            revive: 1,
+            //金币得分
+            glodScore: 1,
+            //移动加分
+            remove: 1000,
+            //闪避加分
+            dodge: 1,
+            //闪避连击加分
+            dodgeCombo: 1,
+            //行进距离加分
+           
+            distanceToScore:1000,
+            //难度提升km/s
+            speedUp: 2,
+        }
 
-
-
+        var palyer_score = {
+            distance: 0,
+            score: 0,
+            enery: 0,
+            coin: 0,
+            oil: 100
+        }
 
         var renderer, scene, camera;
         var HEIGHT, WIDTH;
@@ -373,7 +553,7 @@
         var palyer_car = null;
         var move_left = false;
         var move_right = false;
-        var move_forword = false;
+        var move_forword = true;
         var ai_x = GameConfig.m_RoadWidth / 3;
         var forword_speed = 0;
         var forword_speed_offset = 0;
@@ -433,7 +613,8 @@
                 group.add(model);
                 scene.add(group);
                 model.scale.set(1, 1, scale);
-                model.position.set(0, 0, -GameConfig.m_RoadLength);
+                model.rotation.set(0, -Math.PI, 0);
+                model.position.set(0, 0, GameConfig.m_RoadLength);
             });
         }
         function createCar(src, clone_mode) {
@@ -454,8 +635,7 @@
                     }
                 });
                 mesh.add(model);
-                model.rotation.set(0, -Math.PI, 0);
-                model.scale.set(0.01, 0.01, 0.01);
+                model.rotation.set(0, -Math.PI * 0.5, 0);
             });
             return mesh;
         }
@@ -476,11 +656,15 @@
             mesh.add(model);
             if (building.m_Position == PositionType.Left) {
                 model.position.set(building.m_PositionOffset[0] - width * 0.5, building.m_PositionOffset[1] + height * 0.5, building.m_PositionOffset[2]);
-                mesh.position.set(-GameConfig.m_RoadWidth * 0.5, -5, -60);
+                mesh.position.set(-GameConfig.m_RoadExpandWidth * 0.5, 0, -60);
             }
             else if (building.m_Position == PositionType.Right) {
                 model.position.set(building.m_PositionOffset[0] + width * 0.5, building.m_PositionOffset[1] + height * 0.5, building.m_PositionOffset[2]);
-                mesh.position.set(GameConfig.m_RoadWidth * 0.5, -5, -60);
+                mesh.position.set(GameConfig.m_RoadExpandWidth * 0.5, -5, -60);
+            }
+            else if (building.m_Position == PositionType.Center) {
+                model.position.set(0, building.m_PositionOffset[1] + height * 0.5, building.m_PositionOffset[2]);
+                mesh.position.set(GameConfig.m_RoadExpandWidth * 0.5, 0, -60);
             }
             return mesh;
         }
@@ -500,6 +684,24 @@
             model.position.set(0, GameResConfig.m_Gold.m_Size * 0.5, 0);
             return mesh;
         }
+
+        function createOil() {
+            var mesh = new THREE.Object3D();
+            var geometry = new THREE.PlaneGeometry(GameResConfig.m_Oil.m_Size, GameResConfig.m_Oil.m_Size, 1, 1);
+            var shaderMaterial = new THREE.ShaderMaterial({
+                uniforms: {
+                    ColorMap: { value: LoadTexture(GameResConfig.m_Oil.m_Texture) }
+                },
+                vertexShader: document.getElementById('costomvertex').textContent,
+                fragmentShader: document.getElementById('costomfragment').textContent,
+                transparent: true
+            });
+            var model = new THREE.Mesh(geometry, shaderMaterial);
+            mesh.add(model);
+            model.position.set(0, GameResConfig.m_Oil.m_Size * 0.5, 0);
+            return mesh;
+        }
+
         function createBackground() {
             var geometry = new THREE.PlaneGeometry(GameResConfig.m_Background.m_Width, GameResConfig.m_Background.m_Height, 1, 1);
             var shaderMaterial = new THREE.ShaderMaterial({
@@ -517,22 +719,28 @@
         function createEnemyCar() {
             for (var i = 0; i < 3; i++) {
                 var road_start = parseInt(Math.random() * GameConfig.m_RoadLength);
-                var len = GameConfig.m_RoadLength / GameConfig.m_CarRoadCount;
-                for (var k = 0; k < GameConfig.m_CarRoadCount; k++) {
-                    var z = GameConfig.m_RoadLength % (road_start + k * len);
-                    var cache_data = {
-                        m_Res: { m_Texture: GameResConfig.m_EnemyCars[0] },
-                        m_Type: CacheType.Car,
+                var car_len = ITME_LIST.data.length;
+                var len = GameConfig.m_RoadLength / car_len;
+                for (var k = 0; k < car_len; k++) {
+                    if(ITME_LIST.data[i][k] == ItemType.Car){
 
+                        var z = GameConfig.m_RoadLength % (road_start + k * len);
+                        var cache_data = {
+                            m_Res: { m_Texture: GameResConfig.m_EnemyCars[0] },
+                            m_Type: CacheType.Car,
+    
+                        }
+                        var car = getCachedObject(cache_data);
+                        car.m_CachedTag = cache_data;
+                        car.visible = true;
+                        car.PositionType = i;
+                        car.position.set((i - 1) * GameConfig.m_RoadWidth / 3, 0, -z);
+                        car.m_SpeedOffset = 0;
+                        car.m_Type = ItemType.Car;
+                        car.x = (i - 1) * GameConfig.m_RoadWidth / 3;
+                        scene.add(car);
+                        enemy_car_list.push(car);
                     }
-                    var car = getCachedObject(cache_data);
-                    car.m_CachedTag = cache_data;
-                    car.visible = true;
-                    car.position.set((i - 1) * GameConfig.m_RoadWidth / 3, 0, -z);
-                    car.m_SpeedOffset = 0;
-                    car.m_Type = ItemType.Car;
-                    scene.add(car);
-                    enemy_car_list.push(car);
                 }
             }
         }
@@ -541,10 +749,11 @@
         }
         function getCachedObject(cache_data) {
             var temp = CACHED_OBJECT[cache_data.m_Res.m_Texture];
-            if (temp && temp.length > 0) return temp.pop();
+            if (temp && temp.length > 0 && cache_data.m_Type != CacheType.Gold && cache_data.m_Type != CacheType.Car) return temp.pop();
             if (cache_data.m_Type == CacheType.Building) return createBuilding(cache_data.m_Res);
             if (cache_data.m_Type == CacheType.Car) return createCar(cache_data.m_Res.m_Texture, true);
             if (cache_data.m_Type == CacheType.Gold) return createGold(cache_data.m_Res.m_Texture);
+            if (cache_data.m_Type == CacheType.Oil) return createOil(cache_data.m_Res.m_Texture);
             return null;
         }
         function pushCachedObject(obj) {
@@ -558,7 +767,9 @@
             temp.push(obj);
         }
         function chekcRunEnd(obj) {
-            return (obj.position.z - palyer_car.position.z) > 10;
+            //console.log(obj.position.z,palyer_car.position.z);
+            // return (obj.position.z - palyer_car.position.z) > 10;
+            return obj.position.z > 0;
         }
         Math.lerp = function (a, b, t) {
             return a + (b - a) * t;
@@ -617,10 +828,27 @@
                 var item = static_item_list[i];
                 item.position.z += frame * getCarSpeed();
                 if (chekcRunEnd(item)) {
+                    //console.log('end',item.position.x);
                     pushCachedObject(item);
+
                 }
                 else {
                     temp_static_item.push(item);
+                }
+
+                //吃金币
+                if ((palyer_car.position.z > item.position.z)
+                    && Math.abs(palyer_car.position.x - item.position.x) < GameResConfig.m_Car.m_Width
+                    && Math.abs(palyer_car.position.z - item.position.z) < GameResConfig.m_Car.m_Height) {
+                        //console.log('eat');
+                    if(item.m_Type == ItemType.Gold){
+
+                        this.add_coin();
+                        pushCachedObject(item);
+                    }else if(item.m_Type == ItemType.Oil){
+                        this.add_oil(PlayScoreCofing.oil_add);
+                        pushCachedObject(item);
+                    }
                 }
             }
             static_item_list = temp_static_item;
@@ -628,7 +856,9 @@
         }
 
         function update(frame) {
-
+            if(palyer_score.oil == 0){
+                move_forword = false;
+            }
             //update car
             if (palyer_car) {
                 this.carMove(frame);
@@ -647,11 +877,17 @@
                 forword_speed_offset = Math.lerp(forword_speed_offset, 0, frame);
             }
 
-            if (move_forword) updateFollowCarPosition(frame);
+            if (move_forword) {
+                updateFollowCarPosition(frame);
+                var f = frame > 0.17 ? 0.16 : frame;
+                this.add_distance(frame * getCarSpeed());
+            };
 
 
             //update enemy car
-            for (var i = 0; i < enemy_car_list.length; i++) {
+            var temp_car_list = [...enemy_car_list];
+            var enery_len = enemy_car_list.length;
+            for (var i = 0; i < enery_len; i++) {
                 var item = enemy_car_list[i];
                 if (item.m_SpeedOffset > 0) {
                     item.m_SpeedOffset = Math.lerp(item.m_SpeedOffset, 0, 0.1);
@@ -660,23 +896,53 @@
                 var player_speed = move_forword ? getCarSpeed() : 0;
                 var speed = self_seepd - player_speed;
                 item.position.z -= frame * speed;
+                if(item.x != item.position.x){
+                    item.position.x += GameConfig.m_CarHorizontalSpeed * frame * item.direction;
+                    if(item.direction > 0 && item.position.x > item.x){
+                        item.position.x = item.x
+                    }else if(item.direction < 0 && item.position.x < item.x){
+                        item.position.x = item.x
+                    }
+
+                }
                 if (item.position.z < -GameConfig.m_RoadLength) {
                     //pushCachedObject(item);
-                    item.position.z += GameConfig.m_RoadLength;
+                     //item.position.z += GameConfig.m_RoadLength;
                 }
                 else if (item.position.z > 0) {
-                    item.position.z -= GameConfig.m_RoadLength;
+                    pushCachedObject(item);
+                    temp_car_list.splice(i,1);
+                    //item.position.z -= GameConfig.m_RoadLength;
+                    //item.PositionType = Math.floor(Math.random()*3);
+                    //item.position.x = item.x = GameConfig.m_RoadWidth / 3 * (item.PositionType - 1);
+                    //console.log(item.position.x,item.x);
                 }
                 else if ((palyer_car.position.z > item.position.z)
                     && Math.abs(palyer_car.position.x - item.position.x) < GameResConfig.m_Car.m_Width
                     && Math.abs(palyer_car.position.z - item.position.z) < GameResConfig.m_Car.m_Height) {
                     //pushCachedObject(item);
+                    
                     forword_speed -= GameConfig.m_CarCrashSpeedOffset;
                     forword_speed = Math.max(forword_speed, 0);
                     item.m_SpeedOffset = GameConfig.m_CarCrashSpeedOffset;
+                    var x = item.position.x,po = 1;
+                    if(x < 0){
+                        po = 1;
+                    }else if(x > 0){
+                        po = -1;
+                    }else if(Math.random() > 0.5){
+                        po = -1;
+                    }else{
+                        po = 1;
+                    }
+                    item.PositionType += po;
+                    item.x_start = x;
+                    item.direction = po;
+                    item.x = x + GameConfig.m_RoadWidth / 3 * po;
+                    this.update_oil(-PlayScoreCofing.collideOil);
                 }
             }
-            //enemy_car_list = temp_car_list;
+            enemy_car_list = temp_car_list;
             if (move_forword) {
                 item_refresh_time += frame;
                 if (item_refresh_time > (ITME_LIST.time / ITME_LIST.data.length)) {
@@ -685,19 +951,21 @@
                     for (var i = 0; i < group.length; i++) {
                         var type = group[i];
                         if (type == ItemType.Car) {
-                            // var cache_data = {
-                            //     m_Res: { m_Texture: GameResConfig.m_EnemyCars[0] },
-                            //     m_Type: CacheType.Car,
+                            var cache_data = {
+                                m_Res: { m_Texture: GameResConfig.m_EnemyCars[0] },
+                                m_Type: CacheType.Car,
 
-                            // }
-                            // var car = getCachedObject(cache_data);
-                            // car.m_CachedTag = cache_data;
-                            // car.visible = true;
-                            // car.position.set((i - 1) * GameConfig.m_RoadWidth / 3, 0, -GameConfig.m_RoadLength);
-                            // car.m_SpeedOffset=0;
-                            // car.m_Type = ItemType.Car;
-                            // scene.add(car);
-                            // enemy_car_list.push(car);
+                            }
+                            var car = getCachedObject(cache_data);
+                            car.m_CachedTag = cache_data;
+                            car.visible = true;
+                            car.position.set((i - 1) * GameConfig.m_RoadWidth / 3, 0, -GameConfig.m_RoadLength);
+                            car.PositionType = i;
+                            car.m_SpeedOffset=0;
+                            car.m_Type = ItemType.Car;
+                            car.x = (i - 1) * GameConfig.m_RoadWidth / 3;
+                            scene.add(car);
+                            enemy_car_list.push(car);
                         }
                         else if (type == ItemType.Gold) {
                             var cache_data = {
@@ -713,6 +981,20 @@
                             gold.m_Type = ItemType.Gold;
                             scene.add(gold);
                             static_item_list.push(gold);
+                        }else if(type == ItemType.Oil){
+                            var cache_data = {
+                                m_Res: { m_Texture: GameResConfig.m_Oil.m_Texture },
+                                m_Type: CacheType.Oil,
+
+                            }
+                            var oil = getCachedObject(cache_data);
+                            oil.m_CachedTag = cache_data;
+                            oil.visible = true;
+                            oil.position.set((i - 1) * GameConfig.m_RoadWidth / 3, 0, -GameConfig.m_RoadLength);
+
+                            oil.m_Type = ItemType.Oil;
+                            scene.add(oil);
+                            static_item_list.push(oil);
                         }
                     }
                     item_refresh_index = (item_refresh_index + 1) % ITME_LIST.data.length;
@@ -729,8 +1011,8 @@
             requestAnimationFrame(loop);
         }
         function RigisterEvent() {
-            //document.addEventListener( 'keydown', onDocumentKeyDown );
-            //document.addEventListener( 'keyup', onDocumentKeyUp );
+            document.addEventListener('keydown', onDocumentKeyDown);
+            document.addEventListener('keyup', onDocumentKeyUp);
             // document.addEventListener( 'mousedown', onDocumentMouseDown );
             // document.addEventListener( 'mouseup', onDocumentMouseUp );
             // document.addEventListener( 'mousemove', onDocumentMouseMove );
@@ -794,9 +1076,9 @@
         }
 
         /**
-        * name  class 
-        * position -1 left ; 1 right 
-        */
+         * name  class 
+         * position -1 left ; 1 right 
+         */
         function setMoveHandle(name) {
             var node = document.getElementsByClassName(name)[0];
             var time_id = null, move = false;
@@ -822,6 +1104,14 @@
                 if (move) {
                     move = move_left = move_right = false;
                     ai_x = GameConfig.m_RoadWidth / 3;
+                    var pt = palyer_car.position.x / (GameConfig.m_RoadWidth / 6);
+                    if (pt > 0) {
+                        pt = Math.floor(pt);
+                    } else {
+                        pt = Math.ceil(pt);
+                    }
+                    pt = (pt == -0) ? 0 : pt;
+                    palyer_car.PositionType = pt;
                 } else {
 
                     if (name == 'right') {
@@ -835,18 +1125,18 @@
                         palyer_car.PositionType -= 1;
                     }
                     palyer_car.PositionType = THREE.Math.clamp(palyer_car.PositionType, 0, 2);
-                    ai_x = (GameConfig.m_RoadWidth - 2) / 3 * (palyer_car.PositionType - 1);
-                    console.log('single','left',move_left,'right',move_right,palyer_car.PositionType);
+                    ai_x = (GameConfig.m_RoadWidth) / 3 * (palyer_car.PositionType - 1);
+                    //console.log('single', 'left', move_left, 'right', move_right, palyer_car.PositionType);
                 }
             });
         }
 
         function carMove(frame) {
-            var pst = 0, min = -(GameConfig.m_RoadWidth - 2) / 3, max = ai_x;
+            var pst = 0, min = -(GameConfig.m_RoadWidth) / 3, max = ai_x;
             if (move_left) {
                 pst = -1;
                 min = ai_x;
-                max = (GameConfig.m_RoadWidth - 2) / 3;
+                max = (GameConfig.m_RoadWidth) / 3;
             }
             if (move_right) {
                 pst = 1;
@@ -855,32 +1145,74 @@
 
                 palyer_car.position.x += GameConfig.m_CarHorizontalSpeed * frame * pst;
                 palyer_car.position.x = THREE.Math.clamp(palyer_car.position.x, -GameConfig.m_RoadWidth / 3, GameConfig.m_RoadWidth / 3);
-                if (palyer_car.position.x > GameConfig.m_RoadWidth / 6) {
 
-                }
-                if(pst !== 0){
-
-                    var pt = palyer_car.position.x / (GameConfig.m_RoadWidth / 6);
-                    if(pt > 0 ){
-                        pt = Math.floor(pt);
-                    }else{
-                        pt = Math.ceil(pt);
-                    }
-                    pt = (pt == -0) ? 0 : pt;
-                    palyer_car.PositionType = pt;
-                }
             } else if (palyer_car.position.x != ai_x) {
-                console.log('single_move', palyer_car.position.x, ai_x, move_left);
+                //console.log('single_move', palyer_car.position.x, ai_x, move_left);
 
                 palyer_car.position.x += GameConfig.m_CarHorizontalSpeed * frame * pst;
-
                 palyer_car.position.x = THREE.Math.clamp(palyer_car.position.x, min, max);
             } else {
-                console.log('aix', ai_x);
+                //console.log('aix', ai_x);
                 move_left = false;
                 move_right = false;
                 ai_x = GameConfig.m_RoadWidth / 3;
             }
+        }
+
+        function set_palyer_score(name,value) {
+            document.getElementsByClassName(name)[0].innerHTML = value;
+        }
+
+        function add_coin(){
+            palyer_score.coin += 1;
+            this.set_palyer_score('glod_num',palyer_score.coin);
+            this.add_score(PlayScoreCofing.glodScore);
+            this.add_enery(PlayScoreCofing.goldToEnergy);
+        }
+
+        function add_score(value){
+            palyer_score.score += value;
+            var text = '得分：' + palyer_score.score;
+            this.set_palyer_score('score_num',text);
+        }
+
+        function add_enery(value){
+            palyer_score.enery += value;
+            this.set_palyer_score('enery_num',palyer_score.enery);
+        }
+
+        function add_distance(value){
+            
+            if(Math.random() > 0.5){
+                value = Math.ceil(value);
+            }else{
+                value = Math.floor(value);
+            }
+            palyer_score.distance += value * PlayScoreCofing.distance;
+            var now_value = parseInt(document.getElementsByClassName('distance_num')[0].innerHTML);
+            if(palyer_score.distance > (now_value + 10)){
+                if((palyer_score.distance % 1000) < 12){
+                    this.add_score(PlayScoreCofing.distanceToScore); 
+                }
+                var text = palyer_score.distance + '米';
+                this.set_palyer_score('distance_num',text);
+                this.update_oil(-(palyer_score.distance - now_value)/ PlayScoreCofing.oil_cut);
+            }
+        }
+
+        function update_oil(value){
+            palyer_score.oil += value;
+            palyer_score.oil = Math.max(palyer_score.oil,0);
+            var now_oil = parseInt(document.getElementsByClassName('oil_num')[0].innerHTML);
+            if(palyer_score.oil <= (now_oil-1)){
+                this.set_palyer_score('oil_num',Math.ceil(palyer_score.oil) + ' / 100');
+            }
+        }
+
+        function add_oil(value){
+            palyer_score.oil += value;
+            palyer_score.oil = Math.min(palyer_score.oil,PlayScoreCofing.oil);
+            this.set_palyer_score('oil_num',Math.ceil(palyer_score.oil) + ' / 100');
         }
 
         init();
@@ -890,7 +1222,7 @@
         createBackground();
         createRoad();
         createEnemyCar();
-        palyer_car = createCar(GameResConfig.m_Car.m_Texture);
+        palyer_car = createCar(GameResConfig.m_Car.m_Texture,false);
         palyer_car.PositionType = PositionType.Center;
         scene.add(palyer_car);
 
