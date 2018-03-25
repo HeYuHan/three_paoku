@@ -5,158 +5,34 @@
     <meta charset="UTF-8">
     <meta name="flexible" content="maximum-dpr=3" />
     <meta name="viewport" content="width=device-width, initial-scale=1.0">
-    <title>Document</title>
-    <style>
-        body {
-            margin: 0;
-        }
-
-        #world {
-            position: absolute;
-            width: 100%;
-            height: 100%;
-            overflow: hidden;
-            background: linear-gradient(#e4e0ba, #f7d9aa);
-        }
-
-        #control {
-            position: absolute;
-            z-index: 2;
-            width: 100%;
-            height: 100%;
-            overflow: hidden;
-        }
-
-        /* button{
-            margin-top: 100%;
-            width: 20%;
-            height: 50.004px;
-        } */
-
-        .move {
-            position: absolute;
-            width: 20%;
-            height: 0.6315rem;
-            line-height: 0.2315rem;
-            font-size: 0.1852rem;
-            bottom: 20%;
-            background-color: #fff;
-            -webkit-touch-callout: none;
-            -webkit-user-select: none;
-            -khtml-user-select: none;
-            -moz-user-select: none;
-            -ms-user-select: none;
-            user-select: none;
-        }
-
-        .left {
-            left: 10%;
-        }
-
-        .right {
-            right: 10%;
-        }
-
-        .score_box {
-            display: flex;
-            display: -webkit-box;
-            display: -webkit-flex;
-            width: 3.6111rem;
-            height: 1.0185rem;
-            margin-left: 0.1111rem;
-            margin-top: 0.2222rem;
-        }
-
-        .icon {
-            width: 0.9722rem;
-            height: 0.9722rem;
-            margin-top: 0.0231rem;
-        }
-
-        .num {
-            width: 3.3333rem;
-            height: 0.7407rem;
-            line-height: 0.7407rem;
-            margin-top: 0.1157rem;
-            margin-left: -0.7056rem;
-            text-align: center;
-            font-size: 0.4259rem;
-            border-radius: 0.1481rem;
-            background-color: #434343;
-            border: 0.0556rem solid #fff;
-            z-index: -1;
-            color: #fff;
-        }
-
-        .score {
-            width: 3.6111rem;
-            height: 0.5556rem;
-            line-height: 0.5556rem;
-            font-size: 0.5185rem;
-            color: #3c1c18;
-            text-indent: 0.2778rem;
-            margin-top: 0.3889rem;
-        }
-
-        .distance {
-            position: absolute;
-            width: 3.4259rem;
-            height: 0.6481rem;
-            line-height: 0.6481rem;
-            left: 4.1667rem;
-            top: 0.3333rem;
-            font-size: 0.6296rem;
-            text-align: center;
-            color: #fff;
-        }
-
-        .pause {
-            position: absolute;
-            width: 1.0833rem;
-            height: 1.0833rem;
-            top: 0.1389rem;
-            right: 0.3241rem;
-        }
-
-        .oil_box {
-            display: flex;
-            display: -webkit-box;
-            display: -webkit-flex;
-            position: absolute;
-            width: 6.9722rem;
-            height: 0.8796rem;
-            margin-left: 1.4491rem;
-            bottom: 0.8148rem;
-            border: 0.047rem solid #a0a0a0;
-            border-radius: 0.2407rem;
-            background-image: url(res/texture/gaming/youliang01.png);
-            background-size: 100% 100%;
-            background-repeat: no-repeat;
-            background-color: #a0a0a0;
-        }
-
-
-        .oil_icon {
-            width: 0.7407rem;
-            height: 0.6389rem;
-            margin-left: 1.8519rem;
-            margin-top: 0.1204rem;
-        }
-
-        .oil_num {
-            width: 2.3148rem;
-            margin-left: 0.1852rem;
-            line-height: 0.8796rem;
-            font-size: 0.5185rem;
-            text-align: center;
-            color: #fff;
-        }
-    </style>
+    <title>爱车冲冲冲</title>
+    <link rel="stylesheet" href="gaming.css">
     <script src="http://g.tbcdn.cn/mtb/lib-flexible/0.3.2/??flexible_css.js,flexible.js"></script>
+    
 </head>
 
 <body>
     <div id="world"></div>
+    <div class="pause mask hidden">
+        <div class="pause_view">
+            <p class="pause_title">游戏暂停</p>
+            <!-- <img src="res/texture/rank/guanbi.png"  class="close"> -->
+            <p class="pause_text">是否放弃本次成绩返回到游戏主页？</p>
+            <button class="pause_over pause_btn">结束游戏</button>
+            <button class="pause_again pause_btn">继续游戏</button>
+        </div>
+    </div>
+    <div class="mask over hidden">
+        <div class="over_view">
+            <p class="over_title">本次成绩</p>
+            <p class="over_score">本场得分：</p>
+            <p class="over_best_score">最佳记录：200</p>
+            <p class="over_best_rank">目前排行：200</p>
+            <button class="pause_btn over_relife" id='over_relife'>免费复活</button>
+            <button class="pause_btn over_over" id='over_over'>结束游戏</button>
+            <button class="pause_btn over_again" id='over_again'>再来一局</button>
+        </div>
+    </div>
     <div id="control">
         <input id="buildingarg">
         <button style="width:99.9972px;height:21.9996px;" onclick="ParseBuildArg()">解析建筑</button>
@@ -170,12 +46,10 @@
         </div>
         <p class="score score_num">得分：0</p>
         <p class="distance distance_num">0米</p>
-        <img src="res/texture/gaming/zt.png" class="pause" onclick="zt()">
+        <img src="res/texture/gaming/zt.png" class="zt" onclick="zt()">
         <div class="oil_box">
-
             <img src="res/texture/gaming/youliangi03.png" class="oil_icon">
             <p class="oil_num">100 / 100</p>
-
         </div>
 
         <div class="move left"></div>
@@ -183,6 +57,8 @@
     </div>
     <script src="three.min.js"></script>
     <script src="./loaders/FBXLoader.js"></script>
+    <script src='dom.js'></script>
+    <script src='gaming_dom.js'></script>
     <script type="x-shader/x-vertex" id="uvoffsetvertex">
         uniform vec2 offsetUV;
         uniform vec2 scaleUV;
@@ -232,7 +108,8 @@
 
         }
         function zt() {
-            move_forword = !move_forword;
+            gaming = false;
+            show_node('pause');
         }
 
         ///////////////////////////////////////////////////////////////////////////////////////////
@@ -563,6 +440,7 @@
         var move_forword = true;
         var move_ai = false;
         var ai_drive = false;
+        var gaming = true;
         var ai_x = GameConfig.m_RoadWidth / 3;
         var forword_speed = 0;
         var forword_speed_offset = 0;
@@ -868,8 +746,16 @@
         }
 
         function update(frame) {
-            if (palyer_score.oil == 0) {
-                move_forword = false;
+            if(!gaming){
+                return;
+            }
+
+            if (palyer_score.oil <= 0) {
+                //move_forword = false;
+                gaming = false;
+                set_score();
+                show_node('over');
+
             }
             //update car
             if (palyer_car) {
@@ -903,21 +789,21 @@
             for (var i = 0; i < enery_len; i++) {
                 var item = enemy_car_list[i];
                 if (item.m_SpeedOffset > 0) {
-                    item.m_SpeedOffset = Math.lerp(0, 0, 0.2);
+                    item.m_SpeedOffset = Math.lerp(item.m_SpeedOffset, 0, 0.2);
                 }
                 var self_seepd = GameConfig.m_EnemyCarSpeed + item.m_SpeedOffset;
                 var player_speed = move_forword ? getCarSpeed() : 0;
                 var speed = self_seepd - player_speed;
                 item.position.z -= frame * speed;
-                if (item.x != item.position.x) {
-                    item.position.x += GameConfig.m_CarHorizontalSpeed * frame * item.direction;
-                    if (item.direction > 0 && item.position.x > item.x) {
-                        item.position.x = item.x
-                    } else if (item.direction < 0 && item.position.x < item.x) {
-                        item.position.x = item.x
-                    }
+                // if (item.x != item.position.x) {
+                //     item.position.x += GameConfig.m_CarHorizontalSpeed * frame * item.direction;
+                //     if (item.direction > 0 && item.position.x > item.x) {
+                //         item.position.x = item.x
+                //     } else if (item.direction < 0 && item.position.x < item.x) {
+                //         item.position.x = item.x
+                //     }
 
-                }
+                // }
 
                 if (!move_ai && Math.abs(palyer_car.position.x - item.position.x) < GameResConfig.m_Car.m_Width && Math.abs(item.position.z - palyer_car.position.z) < PlayScoreCofing.aiY) {
                     if (ai_drive) {
@@ -970,11 +856,10 @@
 
                         //console.log('carsh', palyer_car.position.x, item.position.x)
                         palyer_score.carsh = true;
-                        console.log(new Date(),'carsh',palyer_score.carsh);
+                        //console.log(new Date(),'carsh',palyer_score.carsh);
                         forword_speed -= GameConfig.m_CarCrashSpeedOffset;
                         forword_speed = Math.max(forword_speed, 0);
-                        //item.m_SpeedOffset = GameConfig.m_CarCrashSpeedOffset;
-                        item.m_SpeedOffset = -75;
+                        item.m_SpeedOffset = GameConfig.m_CarCrashSpeedOffset;
                         var x = item.position.x, po = 1;
                         if (x < 0) {
                             po = 1;
@@ -1064,6 +949,8 @@
             requestAnimationFrame(loop);
         }
         function RigisterEvent() {
+            set_pause();
+            set_over();
             document.addEventListener('keydown', onDocumentKeyDown);
             document.addEventListener('keyup', onDocumentKeyUp);
             // document.addEventListener( 'mousedown', onDocumentMouseDown );
@@ -1239,10 +1126,10 @@
 
         function will_carsh(){
             if(!carsh_time_id){
-                console.log('ssssssssss');
+                //console.log('ssssssssss');
               carsh_time_id =  setTimeout(() => {
                     //console.log(new Date(),'eee',palyer_score.carsh);
-                    console.log(carsh_time_id);
+                    //console.log(carsh_time_id);
                     if(!palyer_score.carsh){
                         //console.log('dodge');
                         palyer_score.dodgeCount ++;

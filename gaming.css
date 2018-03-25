@@ -1,0 +1,280 @@
+body {
+    margin: 0;
+}
+
+.show{
+    display: block;
+}
+
+.hidden{
+    display: none;
+}
+
+button{
+    border: none;
+    border-width: 0;
+}
+
+p{
+    margin: 0;
+    padding: 0;
+}
+
+.mask{
+    position: fixed;
+    width: 100%;
+    height: 100%;
+    top: 0;
+    right: 0;
+    bottom: 0;
+    left: 0;
+    z-index: 99;
+    background-color: rgba(0, 0, 0, 0.6);
+}
+
+.pause_view{
+    width: 9.4167rem;
+    height: 7.963rem;
+    background-image: url(res/texture/pause/pause.png);
+    background-size: 100% 100%;
+    background-repeat: no-repeat;
+    margin: 4.0741rem  0 0 0.2778rem;
+    overflow: hidden;
+}
+
+
+.pause_title{
+    height: 1.0185rem;
+    line-height: 1.0185rem;
+    margin-top: 0.3519rem;
+    text-align: center;
+    font-size: 0.5556rem;
+    color: #fff;
+}
+
+.pause_text{
+    margin-top: 1.9444rem;
+    text-align: center;
+    font-size: 0.463rem;
+    color: #778ba4;
+}
+
+.pause_btn{
+    margin-top: 2.2222rem;
+    width: 3.8148rem;
+    height: 1.1759rem;
+    line-height: 1.1759rem;
+    font-size: 0.5556rem;
+    color: #fff;
+    background-color: #5cbdc3;
+    border-radius: 0.1852rem;
+    -webkit-border-radius: 0.1852rem;
+    -moz-border-radius: 0.1852rem;
+    -ms-border-radius: 0.1852rem;
+    -o-border-radius: 0.1852rem;
+}
+
+.pause_over{
+    margin-left: 0.463rem;
+}
+
+.pause_again{
+    margin-left: 0.7037rem;
+}
+
+.over_view{
+    width: 9.4167rem;
+    height: 15.0556rem;
+    margin: 1.6667rem 0 0 0.2778rem;
+    background-image: url(res/texture/game_over/bg.png);
+    background-size: 100% 100%;
+    background-repeat: no-repeat;
+    overflow: hidden;
+}
+
+.over_title{
+    margin-top: 0.4259rem;
+    height: 1.0185rem;
+    line-height: 1.0185rem;
+    font-size: 0.5556rem;
+    color: #fff;
+    text-align: center;
+}
+
+.over_score{
+    margin-top: 2.8519rem;
+    font-size: 0.5185rem;
+    color: #696c6d;
+    text-align: center;
+}
+
+.over_best_score{
+    margin-top: 1.7037rem;
+    font-size: 0.5185rem;
+    color: #85704c;
+    margin-left: 2.037rem;
+}
+
+.over_best_rank{
+    margin-top: 0.4074rem;
+    font-size: 0.5185rem;
+    color: #85704c;
+    margin-left: 2.037rem;
+}
+
+#over_relife{
+    background-color: #77c883;
+    margin-top: 1.5186rem;
+    margin-left: 2.9259rem;
+}
+
+#over_over{
+    margin-top: 1.6111rem;
+    margin-left: 0.5556rem;
+}
+
+#over_again{
+    margin-top: 1.6111rem;
+    margin-left: 0.5556rem;
+}
+
+#world {
+    position: absolute;
+    width: 100%;
+    height: 100%;
+    overflow: hidden;
+    background: linear-gradient(#e4e0ba, #f7d9aa);
+}
+
+#control {
+    position: absolute;
+    z-index: 2;
+    width: 100%;
+    height: 100%;
+    overflow: hidden;
+}
+
+/* button{
+    margin-top: 100%;
+    width: 20%;
+    height: 50.004px;
+} */
+
+.move {
+    position: absolute;
+    width: 20%;
+    height: 0.6315rem;
+    line-height: 0.2315rem;
+    font-size: 0.1852rem;
+    bottom: 20%;
+    background-color: #fff;
+    -webkit-touch-callout: none;
+    -webkit-user-select: none;
+    -khtml-user-select: none;
+    -moz-user-select: none;
+    -ms-user-select: none;
+    user-select: none;
+}
+
+.left {
+    left: 10%;
+}
+
+.right {
+    right: 10%;
+}
+
+.score_box {
+    display: flex;
+    display: -webkit-box;
+    display: -webkit-flex;
+    width: 3.6111rem;
+    height: 1.0185rem;
+    margin-left: 0.1111rem;
+    margin-top: 0.2222rem;
+}
+
+.icon {
+    width: 0.9722rem;
+    height: 0.9722rem;
+    margin-top: 0.0231rem;
+}
+
+.num {
+    width: 3.3333rem;
+    height: 0.7407rem;
+    line-height: 0.7407rem;
+    margin-top: 0.1157rem;
+    margin-left: -0.7056rem;
+    text-align: center;
+    font-size: 0.4259rem;
+    border-radius: 0.1481rem;
+    background-color: #434343;
+    border: 0.0556rem solid #fff;
+    z-index: -1;
+    color: #fff;
+}
+
+.score {
+    width: 3.6111rem;
+    height: 0.5556rem;
+    line-height: 0.5556rem;
+    font-size: 0.5185rem;
+    color: #3c1c18;
+    text-indent: 0.2778rem;
+    margin-top: 0.3889rem;
+}
+
+.distance {
+    position: absolute;
+    width: 3.4259rem;
+    height: 0.6481rem;
+    line-height: 0.6481rem;
+    left: 4.1667rem;
+    top: 0.3333rem;
+    font-size: 0.6296rem;
+    text-align: center;
+    color: #fff;
+}
+
+.zt {
+    position: absolute;
+    width: 1.0833rem;
+    height: 1.0833rem;
+    top: 0.1389rem;
+    right: 0.3241rem;
+}
+
+.oil_box {
+    display: flex;
+    display: -webkit-box;
+    display: -webkit-flex;
+    position: absolute;
+    width: 6.9722rem;
+    height: 0.8796rem;
+    margin-left: 1.4491rem;
+    bottom: 0.8148rem;
+    border: 0.047rem solid #a0a0a0;
+    border-radius: 0.2407rem;
+    background-image: url(res/texture/gaming/youliang01.png);
+    background-size: 100% 100%;
+    background-repeat: no-repeat;
+    background-color: #a0a0a0;
+}
+
+
+.oil_icon {
+    width: 0.7407rem;
+    height: 0.6389rem;
+    margin-left: 1.8519rem;
+    margin-top: 0.1204rem;
+}
+
+.oil_num {
+    width: 2.3148rem;
+    margin-left: 0.1852rem;
+    line-height: 0.8796rem;
+    font-size: 0.5185rem;
+    text-align: center;
+    color: #fff;
+}
