@@ -92,6 +92,16 @@
             //gl_FragColor = vec4(1,1,0,1);
         }
     </script>
+    <script type="x-shader/x-fragment" id="alphafragment">
+        varying vec2 vUv;
+        uniform sampler2D ColorMap;
+        uniform float Alpha;
+        void main() {
+            vec4 color = texture2D(ColorMap,vUv);
+            color.a *= Alpha;
+            gl_FragColor = color;
+        }
+    </script>
     <script>
         //tools
         /////////////////////////////////////////////////////////////////////////////////////////////
@@ -206,7 +216,23 @@
                 m_Texture: "res/texture/item/oil.png",
                 m_Size: 1
             },
-
+            m_Effect:{
+                m_CarCrash:{
+                    m_Texture:"res/texture/gaming/pengzhuang_ef.png",
+                    m_Width:4,
+                    m_Height:3
+                },
+                m_WeiQi:{
+                    m_Texture:"res/texture/gaming/weiqi_m.png",
+                    m_Width:2,
+                    m_Height:5
+                },
+                m_ShaBao:{
+                    m_Texture:"res/texture/gaming/shabao.png",
+                    m_Width:3,
+                    m_Height:3
+                }
+            },
             m_Buildings: {
                 m_Scale: 0.05,
                 m_Data: [
@@ -373,6 +399,7 @@
             Car: 3,
             Accelerate: 4,
             Oil: 5,
+            CrashParitcle:6,
         }
 
         var CACHED_OBJECT = [];
@@ -434,7 +461,7 @@
 
 
         //run time data
-        var palyer_car = null;
+        var player_car = null;
         var move_left = false;
         var move_right = false;
         var move_forword = true;
@@ -447,6 +474,7 @@
         var car_move_totle_length = 0;
         var road_material_arg = null;
         var update_last_time = 0;
+        var particle_list=[];
         var left_ad_list = [];
         var enemy_car_list = [];
         var static_item_list = [];
@@ -505,6 +533,43 @@
                 model.position.set(0, 0, GameConfig.m_RoadLength);
             });
         }
+        function createSprite(width,height,src){
+            var sprite_mesh_data = new THREE.PlaneGeometry(width, height, 1, 1);
+            var shaderMaterial = new THREE.ShaderMaterial({
+                uniforms: {
+                    Alpha:{value:1},
+                    ColorMap: { value: LoadTexture(src) }
+                },
+                vertexShader: document.getElementById('costomvertex').textContent,
+                fragmentShader: document.getElementById('alphafragment').textContent,
+                transparent: true
+            });
+            return  new THREE.Mesh(sprite_mesh_data, shaderMaterial);
+            
+        }
+        function setCarShaBaoEnable(car,enable){
+            if(!car.m_ShaBao){
+                var res=GameResConfig.m_Effect.m_ShaBao;
+                var weiqi = createSprite(res.m_Width,res.m_Height,res.m_Texture);
+                car.add(weiqi);
+                weiqi.rotation.set(0,0,0);
+                weiqi.position.set(0,res.m_Height*0.5,0);
+                car.m_ShaBao=weiqi;
+            }
+            car.m_ShaBao.visible=enable?true:false;
+            if(car.m_CarModel)car.m_CarModel.visible=!enable;
+        }
+        function setCarWeiQiEnable(car,enable){
+            if(!car.m_WeiQi){
+                var res=GameResConfig.m_Effect.m_WeiQi;
+                var weiqi = createSprite(res.m_Width,res.m_Height,res.m_Texture);
+                car.add(weiqi);
+                weiqi.rotation.set(-Math.PI*0.5,0,0);
+                weiqi.position.set(0,0.5,res.m_Height*0.5+GameResConfig.m_Car.m_Height);
+                car.m_WeiQi=weiqi;
+            }
+            car.m_WeiQi.visible=enable;
+        }
         function createCar(src, clone_mode) {
             var mesh = new THREE.Object3D();
 
@@ -517,14 +582,12 @@
                     vertexShader: document.getElementById('costomvertex').textContent,
                     fragmentShader: document.getElementById('costomfragment').textContent
                 });
-                model.traverse(function (child) {
-                    if (child.isMesh) {
-                        if (child.name != "pPlane1") child.material = shaderMaterial;
-                    }
-                });
                 mesh.add(model);
                 model.rotation.set(0, -Math.PI * 0.5, 0);
+                
+                mesh.m_CarModel=model;
             });
+            
             return mesh;
         }
 
@@ -549,7 +612,7 @@
             }
             else if (building.m_Position == PositionType.Right) {
                 model.position.set(building.m_PositionOffset[0] + width * 0.5, building.m_PositionOffset[1] + height * 0.5, building.m_PositionOffset[2]);
-                mesh.position.set(GameConfig.m_RoadExpandWidth * 0.5, -5, -60);
+                mesh.position.set(GameConfig.m_RoadExpandWidth * 0.5, 0, -60);
             }
             else if (building.m_Position == PositionType.Center) {
                 model.position.set(0, building.m_PositionOffset[1] + height * 0.5, building.m_PositionOffset[2]);
@@ -573,7 +636,7 @@
             model.position.set(0, GameResConfig.m_Gold.m_Size * 0.5, 0);
             return mesh;
         }
-
+        
         function createOil() {
             var mesh = new THREE.Object3D();
             var geometry = new THREE.PlaneGeometry(GameResConfig.m_Oil.m_Size, GameResConfig.m_Oil.m_Size, 1, 1);
@@ -630,10 +693,15 @@
                         car.x = (i - 1) * GameConfig.m_RoadWidth / 3;
                         scene.add(car);
                         enemy_car_list.push(car);
+
                     }
                 }
             }
         }
+
+
+
+
         function getCarSpeed() {
             return forword_speed + forword_speed_offset;
         }
@@ -644,6 +712,10 @@
             if (cache_data.m_Type == CacheType.Car) return createCar(cache_data.m_Res.m_Texture, true);
             if (cache_data.m_Type == CacheType.Gold) return createGold(cache_data.m_Res.m_Texture);
             if (cache_data.m_Type == CacheType.Oil) return createOil(cache_data.m_Res.m_Texture);
+            if (cache_data.m_Type == CacheType.CrashParitcle)
+            {
+                return createSprite(cache_data.m_Res.m_Width,cache_data.m_Res.m_Height,cache_data.m_Res.m_Texture);
+            }
             return null;
         }
         function pushCachedObject(obj) {
@@ -657,8 +729,8 @@
             temp.push(obj);
         }
         function chekcRunEnd(obj) {
-            //console.log(obj.position.z,palyer_car.position.z);
-            // return (obj.position.z - palyer_car.position.z) > 10;
+            //console.log(obj.position.z,player_car.position.z);
+            // return (obj.position.z - player_car.position.z) > 10;
             return obj.position.z > 0;
         }
         Math.lerp = function (a, b, t) {
@@ -727,9 +799,9 @@
                 }
 
                 //吃金币
-                if ((palyer_car.position.z > item.position.z)
-                    && Math.abs(palyer_car.position.x - item.position.x) < GameResConfig.m_Car.m_Width
-                    && Math.abs(palyer_car.position.z - item.position.z) < GameResConfig.m_Car.m_Height) {
+                if ((player_car.position.z > item.position.z)
+                    && Math.abs(player_car.position.x - item.position.x) < GameResConfig.m_Car.m_Width
+                    && Math.abs(player_car.position.z - item.position.z) < GameResConfig.m_Car.m_Height) {
                     //console.log('eat');
                     if (item.m_Type == ItemType.Gold) {
 
@@ -742,6 +814,24 @@
                 }
             }
             static_item_list = temp_static_item;
+
+            //effect
+            var temp_paritcle_list=[];
+            for(var i=0;i<particle_list.length;i++)
+            {
+                var p=particle_list[i];
+                p.position.z += frame * getCarSpeed();
+                if (chekcRunEnd(p)) {
+                    //console.log('end',item.position.x);
+                    pushCachedObject(p);
+                    
+                }
+                else {
+                    temp_static_item.push(p);
+                    p.material.uniforms.Alpha=Math.lerp(1,0,(-p.position.z/GameConfig.m_CameraPosition[2]));
+                }
+            }
+            particle_list=temp_paritcle_list;
 
         }
 
@@ -758,18 +848,20 @@
 
             }
             //update car
-            if (palyer_car) {
+            if (player_car) {
                 this.carMove(frame);
                 if (forword_speed < GameConfig.m_CarMaxSpeed) {
                     if (move_forword) forword_speed += GameConfig.m_CarAcceleration * frame;
                     else if (forword_speed > 0) forword_speed -= GameConfig.m_CarAcceleration * frame;
                     var s = (GameConfig.m_CarMaxSpeed * GameConfig.m_CarMaxSpeed - forword_speed * forword_speed) * 0.5 / GameConfig.m_CarAcceleration;
-                    palyer_car.position.z = GameConfig.m_CarPosition[2] + s * 0.02;
+                    player_car.position.z = GameConfig.m_CarPosition[2] + s * 0.02;
                 }
                 else {
-                    palyer_car.position.z = GameConfig.m_CarPosition[2]
+                    player_car.position.z = GameConfig.m_CarPosition[2]
                     forword_speed = GameConfig.m_CarMaxSpeed;
+                    
                 }
+                setCarWeiQiEnable(player_car,move_forword);
             }
             if (forword_speed_offset != 0) {
                 forword_speed_offset = Math.lerp(forword_speed_offset, 0, frame);
@@ -788,13 +880,25 @@
 
             for (var i = 0; i < enery_len; i++) {
                 var item = enemy_car_list[i];
-                if (item.m_SpeedOffset > 0) {
-                    item.m_SpeedOffset = Math.lerp(item.m_SpeedOffset, 0, 0.2);
-                }
+                
                 var self_seepd = GameConfig.m_EnemyCarSpeed + item.m_SpeedOffset;
                 var player_speed = move_forword ? getCarSpeed() : 0;
                 var speed = self_seepd - player_speed;
                 item.position.z -= frame * speed;
+
+                setCarShaBaoEnable(item,item.m_Crash);
+                if(item.m_Crash)
+                {
+                    if (item.m_SpeedOffset > 0) {
+                        item.m_SpeedOffset = Math.lerp(item.m_SpeedOffset, 0, 0.2);
+                    }
+                    if(item.m_SpeedOffset == 0)
+                    {
+                        pushCachedObject(item);
+                        item.m_Crash=false;
+                    }
+                    continue;
+                }
                 // if (item.x != item.position.x) {
                 //     item.position.x += GameConfig.m_CarHorizontalSpeed * frame * item.direction;
                 //     if (item.direction > 0 && item.position.x > item.x) {
@@ -805,12 +909,12 @@
 
                 // }
 
-                if (!move_ai && Math.abs(palyer_car.position.x - item.position.x) < GameResConfig.m_Car.m_Width && Math.abs(item.position.z - palyer_car.position.z) < PlayScoreCofing.aiY) {
+                if (!move_ai && Math.abs(player_car.position.x - item.position.x) < GameResConfig.m_Car.m_Width && Math.abs(item.position.z - player_car.position.z) < PlayScoreCofing.aiY) {
                     if (ai_drive) {
                         var car_ran_pst = 1;
-                        if (palyer_car.position.x > 1) {
+                        if (player_car.position.x > 1) {
                             car_ran_pst = -1;
-                        } else if (palyer_car.position.x < -1) {
+                        } else if (player_car.position.x < -1) {
                             car_ran_pst = 1;
                         } else {
                             car_ran_pst = Math.random() > 0.5 ? 1 : -1;
@@ -826,9 +930,9 @@
                             move_left = true;
                         }
                         move_ai = true;
-                        palyer_car.PositionType += car_ran_pst;
-                        palyer_car.PositionType += 30;
-                        palyer_car.PositionType %= 3;
+                        player_car.PositionType += car_ran_pst;
+                        player_car.PositionType += 30;
+                        player_car.PositionType %= 3;
                     }
                     will_carsh();
 
@@ -849,16 +953,17 @@
                     //item.position.x = item.x = GameConfig.m_RoadWidth / 3 * (item.PositionType - 1);
                     //console.log(item.position.x,item.x);
                 }
-                else if ((palyer_car.position.z > item.position.z)
-                    && Math.abs(palyer_car.position.x - item.position.x) < GameResConfig.m_Car.m_Width) {
+                else if ((player_car.position.z > item.position.z)
+                    && Math.abs(player_car.position.x - item.position.x) < GameResConfig.m_Car.m_Width) {
                     //pushCachedObject(item);
-                    if (Math.abs(palyer_car.position.z - item.position.z) < GameResConfig.m_Car.m_Height) {
+                    if (Math.abs(player_car.position.z - item.position.z) < GameResConfig.m_Car.m_Height) {
 
-                        //console.log('carsh', palyer_car.position.x, item.position.x)
+                        //console.log('carsh', player_car.position.x, item.position.x)
                         palyer_score.carsh = true;
                         //console.log(new Date(),'carsh',palyer_score.carsh);
                         forword_speed -= GameConfig.m_CarCrashSpeedOffset;
                         forword_speed = Math.max(forword_speed, 0);
+                        item.m_Crash=true;
                         item.m_SpeedOffset = GameConfig.m_CarCrashSpeedOffset;
                         var x = item.position.x, po = 1;
                         if (x < 0) {
@@ -875,6 +980,19 @@
                         item.direction = po;
                         item.x = x + GameConfig.m_RoadWidth / 3 * po;
                         this.update_oil(-PlayScoreCofing.collideOil);
+                        ///////////////////////////////////////////////////
+                        //crash effect
+                        var cache_data = {
+
+                            m_Res: GameResConfig.m_Effect.m_CarCrash ,
+                            m_Type: CacheType.CrashParitcle
+
+                        }
+                        var particle = getCachedObject(cache_data);
+                        particle.m_CachedTag = cache_data;
+                        scene.add(particle);
+                        particle.position.set(item.position.x,item.position.y,item.position.z);
+                        particle_list.push(particle);
                     }
 
                 }
@@ -938,7 +1056,7 @@
                     item_refresh_index = Math.floor((Math.random() * ITME_LIST.data.length));
                 }
             }
-
+            
         }
         function loop(time) {
             update((time - update_last_time) * 0.001);
@@ -1051,71 +1169,71 @@
                     if (move) {
                         move = move_left = move_right = false;
                         ai_x = GameConfig.m_RoadWidth / 3;
-                        var pt = palyer_car.position.x / (GameConfig.m_RoadWidth / 6);
+                        var pt = player_car.position.x / (GameConfig.m_RoadWidth / 6);
                         if (pt > 0) {
                             pt = Math.floor(pt);
                         } else {
                             pt = Math.ceil(pt);
                         }
                         pt = (pt == -0) ? 0 : pt;
-                        palyer_car.PositionType = pt;
+                        player_car.PositionType = pt;
                     } else {
 
                         if (name == 'right') {
                             move_right = true;
                             move_left = false;
-                            palyer_car.PositionType += 1;
+                            player_car.PositionType += 1;
 
                         } else {
                             move_left = true;
                             move_right = false;
-                            palyer_car.PositionType -= 1;
+                            player_car.PositionType -= 1;
                         }
-                        palyer_car.PositionType = THREE.Math.clamp(palyer_car.PositionType, 0, 2);
-                        ai_x = (GameConfig.m_RoadWidth) / 3 * (palyer_car.PositionType - 1);
-                        //console.log('single', 'left', move_left, 'right', move_right, palyer_car.PositionType);
+                        player_car.PositionType = THREE.Math.clamp(player_car.PositionType, 0, 2);
+                        ai_x = (GameConfig.m_RoadWidth) / 3 * (player_car.PositionType - 1);
+                        //console.log('single', 'left', move_left, 'right', move_right, player_car.PositionType);
                     }
                 }
             });
         }
 
         function carMove(frame) {
-            var pst = 0, min = -(GameConfig.m_RoadWidth) / 3, max = ai_x, car_t = palyer_car.PositionType - 1;
+            var pst = 0, min = -(GameConfig.m_RoadWidth) / 3, max = ai_x, car_t = player_car.PositionType - 1;
             var GCW = GameConfig.m_RoadWidth / 3;
             if (move_left) {
                 pst = -1;
                 min = ai_x;
                 max = (GameConfig.m_RoadWidth) / 3;
-                if (move_ai && palyer_car.position.x < car_t * GCW) {
-                    palyer_car.position.x = car_t * GCW;
+                if (move_ai && player_car.position.x < car_t * GCW) {
+                    player_car.position.x = car_t * GCW;
                     move_ai = false;
                     move_left = false;
                 }
             }
             if (move_right) {
                 pst = 1;
-                if (move_ai && palyer_car.position.x > car_t * GCW) {
-                    palyer_car.position.x = car_t * GCW;
+                if (move_ai && player_car.position.x > car_t * GCW) {
+                    player_car.position.x = car_t * GCW;
                     move_ai = false;
                     move_right = false;
                 }
             }
 
-            if (palyer_car.position.x == car_t * GCW) {
+            if (player_car.position.x == car_t * GCW) {
                 move_ai = false;
             }
 
             if (ai_x == GameConfig.m_RoadWidth / 3) {
 
 
-                palyer_car.position.x += GameConfig.m_CarHorizontalSpeed * frame * pst;
-                palyer_car.position.x = THREE.Math.clamp(palyer_car.position.x, -GameConfig.m_RoadWidth / 3, GameConfig.m_RoadWidth / 3);
+                player_car.position.x += GameConfig.m_CarHorizontalSpeed * frame * pst;
+                player_car.position.x = THREE.Math.clamp(player_car.position.x, -GameConfig.m_RoadWidth / 3, GameConfig.m_RoadWidth / 3);
 
-            } else if (palyer_car.position.x != ai_x) {
-                //console.log('single_move', palyer_car.position.x, ai_x, move_left);
+            } else if (player_car.position.x != ai_x) {
+                //console.log('single_move', player_car.position.x, ai_x, move_left);
 
-                palyer_car.position.x += GameConfig.m_CarHorizontalSpeed * frame * pst;
-                palyer_car.position.x = THREE.Math.clamp(palyer_car.position.x, min, max);
+                player_car.position.x += GameConfig.m_CarHorizontalSpeed * frame * pst;
+                player_car.position.x = THREE.Math.clamp(player_car.position.x, min, max);
             } else {
                 //console.log('aix', ai_x);
                 move_left = false;
@@ -1210,9 +1328,9 @@
         createBackground();
         createRoad();
         createEnemyCar();
-        palyer_car = createCar(GameResConfig.m_Car.m_Texture, false);
-        palyer_car.PositionType = PositionType.Center;
-        scene.add(palyer_car);
+        player_car = createCar(GameResConfig.m_Car.m_Texture, false);
+        player_car.PositionType = PositionType.Center;
+        scene.add(player_car);
 
         // var building = createBuilding(GameResConfig.m_Buildings[0]);
         // scene.add(building);
