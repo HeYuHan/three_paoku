@@ -33,12 +33,12 @@ p{
 }
 
 .pause_view{
-    width: 9.4167rem;
-    height: 7.963rem;
+    width: 8rem;
+    height: 6.4815rem;
     background-image: url(res/texture/pause/pause.png);
     background-size: 100% 100%;
     background-repeat: no-repeat;
-    margin: 4.0741rem  0 0 0.2778rem;
+    margin: 5.1852rem  0 0 1.0741rem;
     overflow: hidden;
 }
 
@@ -53,39 +53,35 @@ p{
 }
 
 .pause_text{
-    margin-top: 1.9444rem;
+    margin-top: 2.6667rem;
     text-align: center;
-    font-size: 0.463rem;
-    color: #778ba4;
+    font-size: 0.3333rem;
+    color: #fff;
 }
 
 .pause_btn{
-    margin-top: 2.2222rem;
-    width: 3.8148rem;
-    height: 1.1759rem;
-    line-height: 1.1759rem;
-    font-size: 0.5556rem;
-    color: #fff;
-    background-color: #5cbdc3;
-    border-radius: 0.1852rem;
-    -webkit-border-radius: 0.1852rem;
-    -moz-border-radius: 0.1852rem;
-    -ms-border-radius: 0.1852rem;
-    -o-border-radius: 0.1852rem;
+    margin-top: 2.0185rem;
+    width: 2.9537rem;
+    height: 0.8426rem;
+    background-size: 100% 100%;
+    background-repeat: no-repeat;
+    background-color: transparent;
 }
 
 .pause_over{
-    margin-left: 0.463rem;
+    margin-left: 0.7222rem;
+    background-image: url(res/texture/pause/btn_o.png);
 }
 
 .pause_again{
-    margin-left: 0.7037rem;
+    margin-left: 1.0926rem;
+    background-image: url(res/texture/pause/btn_a.png);
 }
 
 .over_view{
-    width: 9.4167rem;
-    height: 15.0556rem;
-    margin: 1.6667rem 0 0 0.2778rem;
+    width: 8rem;
+    height: 9.537rem;
+    margin: 3.9815rem 0 0 1.1111rem;
     background-image: url(res/texture/game_over/bg.png);
     background-size: 100% 100%;
     background-repeat: no-repeat;
@@ -102,40 +98,47 @@ p{
 }
 
 .over_score{
-    margin-top: 2.8519rem;
-    font-size: 0.5185rem;
-    color: #696c6d;
+    margin-top: 2.0556rem;
+    height: 0.963rem;
+    line-height: 0.963rem;
+    font-size: 0.4259rem;
+    color: #abd8f7;
     text-align: center;
 }
 
 .over_best_score{
-    margin-top: 1.7037rem;
-    font-size: 0.5185rem;
-    color: #85704c;
-    margin-left: 2.037rem;
+    margin-top: 1.2037rem;
+    font-size: 0.2963rem;
+    line-height: 0.4537rem;
+    color: #54a5d4;
+    margin-left: 2.6667rem;
 }
 
 .over_best_rank{
-    margin-top: 0.4074rem;
-    font-size: 0.5185rem;
-    color: #85704c;
-    margin-left: 2.037rem;
+    margin-top: 0.3333rem;
+    font-size: 0.2963rem;
+    line-height: 0.4537rem;
+    color: #54a5d4;
+    margin-left: 2.6667rem;
+
 }
 
 #over_relife{
-    background-color: #77c883;
-    margin-top: 1.5186rem;
-    margin-left: 2.9259rem;
+    background-image: url(res/texture/game_over/btn_r.png);
+    margin-top: 1rem;
+    margin-left: 2.5185rem;
 }
 
 #over_over{
-    margin-top: 1.6111rem;
-    margin-left: 0.5556rem;
+    background-image: url(res/texture/game_over/btn_o.png);
+    margin-top: 0.9rem;
+    margin-left: 0.537rem;
 }
 
 #over_again{
-    margin-top: 1.6111rem;
-    margin-left: 0.5556rem;
+    background-image: url(res/texture/game_over/btn_a.png);
+    margin-top: 0.9rem;
+    margin-left: 1.1019rem;
 }
 
 #world {
@@ -162,10 +165,8 @@ p{
 
 .move {
     position: absolute;
-    width: 20%;
-    height: 0.6315rem;
-    line-height: 0.2315rem;
-    font-size: 0.1852rem;
+    width: 30%;
+    height: 1.1111rem;
     bottom: 20%;
     background-color: #fff;
     -webkit-touch-callout: none;
@@ -188,93 +189,97 @@ p{
     display: flex;
     display: -webkit-box;
     display: -webkit-flex;
-    width: 3.6111rem;
-    height: 1.0185rem;
-    margin-left: 0.1111rem;
+    width: 3.4259rem;
+    height: 0.8148rem;
+    margin-left: 0.2222rem;
     margin-top: 0.2222rem;
 }
 
 .icon {
-    width: 0.9722rem;
-    height: 0.9722rem;
-    margin-top: 0.0231rem;
+    width: 0.6759rem;
+    height: 0.8148rem;
 }
 
 .num {
-    width: 3.3333rem;
-    height: 0.7407rem;
-    line-height: 0.7407rem;
-    margin-top: 0.1157rem;
-    margin-left: -0.7056rem;
+    width: 3rem;
+    height: 0.6574rem;
+    line-height: 0.6574rem;
+    margin-top: 0.0278rem;
+    margin-left: -0.2778rem;
     text-align: center;
-    font-size: 0.4259rem;
-    border-radius: 0.1481rem;
-    background-color: #434343;
-    border: 0.0556rem solid #fff;
+    font-size: 0.3704rem;
     z-index: -1;
     color: #fff;
+    background-image: url(res/texture/gaming/num_bg.png);
+    background-size: 100% 100%;
+    background-repeat: no-repeat;
+
 }
 
 .score {
-    width: 3.6111rem;
-    height: 0.5556rem;
-    line-height: 0.5556rem;
-    font-size: 0.5185rem;
-    color: #3c1c18;
-    text-indent: 0.2778rem;
-    margin-top: 0.3889rem;
+    width: 3.4259rem;
+    height: 0.3704rem;
+    line-height: 0.3704rem;
+    font-size: 0.3704rem;
+    color: #fff;
+    text-indent: 0.1852rem;
+    margin-top: 0.2778rem;
 }
 
 .distance {
     position: absolute;
-    width: 3.4259rem;
+    width: 3.6111rem;
     height: 0.6481rem;
     line-height: 0.6481rem;
-    left: 4.1667rem;
-    top: 0.3333rem;
-    font-size: 0.6296rem;
+    left: 3.7037rem;
+    top: 0.2407rem;
+    font-size: 0.6111rem;
     text-align: center;
     color: #fff;
 }
 
 .zt {
     position: absolute;
-    width: 1.0833rem;
-    height: 1.0833rem;
-    top: 0.1389rem;
-    right: 0.3241rem;
+    width: 0.7593rem;
+    height: 0.7685rem;
+    top: 0.2593rem;
+    right: 0.2407rem;
 }
 
 .oil_box {
-    display: flex;
+    /* display: flex;
     display: -webkit-box;
-    display: -webkit-flex;
+    display: -webkit-flex; */
     position: absolute;
-    width: 6.9722rem;
-    height: 0.8796rem;
-    margin-left: 1.4491rem;
-    bottom: 0.8148rem;
-    border: 0.047rem solid #a0a0a0;
-    border-radius: 0.2407rem;
-    background-image: url(res/texture/gaming/youliang01.png);
+    width: 7.8241rem;
+    height: 0.5093rem;
+    margin-left: 1.463rem;
+    bottom: 0.3704rem;
+    background-image: url(res/texture/gaming/youliang_b.png);
     background-size: 100% 100%;
     background-repeat: no-repeat;
-    background-color: #a0a0a0;
+    overflow: visible;
 }
 
 
 .oil_icon {
-    width: 0.7407rem;
-    height: 0.6389rem;
-    margin-left: 1.8519rem;
-    margin-top: 0.1204rem;
+    position: absolute;
+    width: 0.5556rem;
+    height: 0.4815rem;
+    left: -0.6481rem;
+    top: 0.0093rem;
 }
 
 .oil_num {
-    width: 2.3148rem;
-    margin-left: 0.1852rem;
-    line-height: 0.8796rem;
-    font-size: 0.5185rem;
+    width: 7.7778rem;
+    height: 0.4722rem;
+    margin-left: 0.0185rem;
+    margin-top: 0.0185rem;
+    line-height: 0.4722rem;
+    font-size: 0.4259rem;
     text-align: center;
     color: #fff;
+    background-image: url(res/texture/gaming/youliang_a.png);
+    background-size: 100% 100%;
+    background-repeat: no-repeat;
 }
