@@ -37,3 +37,8 @@ function set_score(){
     over_score.innerHTML = '得分：' + palyer_score.score;
 }
 
+
+function update_oil_img(value){
+    var oil = get_node('oil_num');
+    oil.style.backgroundSize=value +"% 100%";
+}

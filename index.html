@@ -14,28 +14,28 @@
 <body>
     <div id="world"></div>
     <div class="pause mask hidden">
+            <input id="buildingarg">
+            <button style="width:99.9972px;height:21.9996px;" onclick="ParseBuildArg()">解析建筑</button>
         <div class="pause_view">
-            <p class="pause_title">游戏暂停</p>
+            <!-- <p class="pause_title">游戏暂停</p> -->
             <!-- <img src="res/texture/rank/guanbi.png"  class="close"> -->
             <p class="pause_text">是否放弃本次成绩返回到游戏主页？</p>
-            <button class="pause_over pause_btn">结束游戏</button>
-            <button class="pause_again pause_btn">继续游戏</button>
+            <button class="pause_over pause_btn"></button>
+            <button class="pause_again pause_btn"></button>
         </div>
     </div>
     <div class="mask over hidden">
         <div class="over_view">
-            <p class="over_title">本次成绩</p>
+            <!-- <p class="over_title">本次成绩</p> -->
             <p class="over_score">本场得分：</p>
             <p class="over_best_score">最佳记录：200</p>
             <p class="over_best_rank">目前排行：200</p>
-            <button class="pause_btn over_relife" id='over_relife'>免费复活</button>
-            <button class="pause_btn over_over" id='over_over'>结束游戏</button>
-            <button class="pause_btn over_again" id='over_again'>再来一局</button>
+            <button class="pause_btn over_relife" id='over_relife'></button>
+            <button class="pause_btn over_over" id='over_over'></button>
+            <button class="pause_btn over_again" id='over_again'></button>
         </div>
     </div>
     <div id="control">
-        <input id="buildingarg">
-        <button style="width:99.9972px;height:21.9996px;" onclick="ParseBuildArg()">解析建筑</button>
         <div class="score_box glod">
             <img src="res/texture/gaming/coin_num.png" class="icon">
             <p class="num glod_num">0</p>
@@ -48,7 +48,7 @@
         <p class="distance distance_num">0米</p>
         <img src="res/texture/gaming/zt.png" class="zt" onclick="zt()">
         <div class="oil_box">
-            <img src="res/texture/gaming/youliangi03.png" class="oil_icon">
+            <img src="res/texture/gaming/youliang_ico.png" class="oil_icon">
             <p class="oil_num">100 / 100</p>
         </div>
 
@@ -208,13 +208,15 @@
             m_Gold: {
                 m_Type: ItemType.Gold,
                 m_Texture: "res/texture/item/gold.png",
-                m_Size: 1
+                m_Size: 1.2,
+                m_Height:155,
             },
 
             m_Oil: {
                 m_Type: ItemType.Oil,
                 m_Texture: "res/texture/item/oil.png",
-                m_Size: 1
+                m_Size: 1.2,
+                m_Height:140,
             },
             m_Effect:{
                 m_CarCrash:{
@@ -1312,6 +1314,7 @@
             var now_oil = parseInt(document.getElementsByClassName('oil_num')[0].innerHTML);
             if (palyer_score.oil <= (now_oil - 1)) {
                 this.set_palyer_score('oil_num', Math.ceil(palyer_score.oil) + ' / 100');
+                update_oil_img(palyer_score.oil);
             }
         }
 
@@ -1319,6 +1322,7 @@
             palyer_score.oil += value;
             palyer_score.oil = Math.min(palyer_score.oil, PlayScoreCofing.oil);
             this.set_palyer_score('oil_num', Math.ceil(palyer_score.oil) + ' / 100');
+            update_oil_img(palyer_score.oil);
         }
 
         init();
