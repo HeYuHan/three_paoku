@@ -165,23 +165,27 @@ p{
 
 .move {
     position: absolute;
-    width: 30%;
-    height: 1.1111rem;
+    width: 2.3704rem;
+    height: 2.3704rem;
     bottom: 20%;
-    background-color: #fff;
     -webkit-touch-callout: none;
     -webkit-user-select: none;
     -khtml-user-select: none;
     -moz-user-select: none;
     -ms-user-select: none;
     user-select: none;
+
+    background-size: 100% 100%;
+    background-repeat: no-repeat;
 }
 
 .left {
+    background-image: url(res/texture/gaming/anjian_left.png);
     left: 10%;
 }
 
 .right {
+    background-image: url(res/texture/gaming/anjian_right.png);
     right: 10%;
 }
 

@@ -2,7 +2,11 @@ body {
     margin: 0;
     width: 100%;
     height: 100vh;
+    background-image: url(res/texture/home/zhuyebg.jpg);
+    background-size: 100% 100%;
+    background-repeat: no-repeat;
     background-color: #000;
+    overflow: hidden;
 }
 
 .show{
@@ -35,68 +39,88 @@ p{
     background-color: rgba(0, 0, 0, 0.6);
 }
 
+
 .player{
     position: relative;
-    margin-left: 0.0926rem;
+    margin-left: 0.1481rem;
     margin-top: 0.1481rem;
 }
 
+.head{
+    width: 1.4815rem;
+    height: 1.4907rem;
+    background-image: url(res/texture/home/touxiangbg.png);
+    background-size: 100% 100%;
+    background-repeat: no-repeat;
+}
+
 .player_head{
-    width: 1.963rem;
-    height: 1.963rem;
+    width: 1.4815rem;
+    height: 1.4907rem;
     border-radius: 50%;
     -webkit-border-radius: 50%;
     -moz-border-radius: 50%;
     -ms-border-radius: 50%;
     -o-border-radius: 50%;
+    z-index: 1;
 }
 
 .player_msg{
     position: absolute;
-    top: 0.2407rem;
-    left: 2.1852rem;
+    top: 0;
+    left: 1.4074rem;
     color: #fff;
-    font-size: 0.4444rem;
+    font-size: 0.3333rem;
     line-height: 0.5556rem;
+}
+
+.player_msg > p{
+    width: 3.6019rem;
+    height: 0.6574rem;
+    line-height: 0.6574rem;
+    text-indent: 0.2407rem;
+    background-image: url(res/texture/home/xinxi_bg.png);
+    background-size: 100% 100%;
+    background-repeat: no-repeat;
+}
+
+.player_name{
+    margin-bottom: 0.1481rem;
 }
 
 .active{
     position: absolute;
-    width: 1.6019rem;
-    height: 1.6019rem;
-    top: 0.4444rem;
-    right: 0.1667rem;
+    width: 0.8056rem;
+    height: 0.7407rem;
+    top: 0.4259rem;
+    right: 0.3889rem;
 }
 
 .red{
     position: absolute;
-    top: 0.5926rem;
-    right: 1.3889rem;
-    width: 0.3704rem;
-    height: 0.3704rem;
+    top: 0.3611rem;
+    right: 1.0093rem;
+    width: 0.2593rem;
+    height: 0.2593rem;
     z-index: 1;
 }
 
 .home_btn{
     position: absolute;
-    width: 5.9074rem;
-    height: 1.4815rem;
-    margin-left: 2.3148rem;
-    line-height: 1.1759rem;
-    font-size: 0.5556rem;
-    color: #fff;
-    background-color: #5cbdc3;
-    border-radius: 0.1852rem;
-    -webkit-border-radius: 0.1852rem;
-    -moz-border-radius: 0.1852rem;
-    -ms-border-radius: 0.1852rem;
-    -o-border-radius: 0.1852rem;
+    width: 9.8981rem;
+    height: 1.6667rem;
+    left:0.0463rem;
+    background-size: 100% 100%;
+    background-repeat: no-repeat;
+    background-color: transparent;
 }
 
 .rank{
-    bottom: 3.0926rem;
+    bottom: 3.9815rem;
+    background-image: url(res/texture/home/home_r.png);
 }
 
 .go{
-    bottom: 1.1481rem;
+    bottom: 2.2222rem;
+    background-image: url(res/texture/home/home_g.png);
 }
