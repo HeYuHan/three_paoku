@@ -2,7 +2,7 @@ var touchstart = "touchstart" in window ? "touchstart" : "click";
 function set_pause(){
     var pause_over = get_node('pause_over');
     var pause_again = get_node('pause_again');
-    pause_over.addEventListener('touchstart',()=>{
+    pause_over.addEventListener(touchstart,()=>{
         window.location.href = 'home.html';
     })
 
