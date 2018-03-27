@@ -1,3 +1,4 @@
+var touchstart = "touchstart" in window ? "touchstart" : "click";
 function set_pause(){
     var pause_over = get_node('pause_over');
     var pause_again = get_node('pause_again');
@@ -5,7 +6,7 @@ function set_pause(){
         window.location.href = 'home.html';
     })
 
-    pause_again.addEventListener('touchstart',()=>{
+    pause_again.addEventListener(touchstart,()=>{
         hidden_node('pause');
         gaming = true;
     })
@@ -17,15 +18,15 @@ function set_over(){
     var over_relife = get_node('over_relife');
     
     
-    over_over.addEventListener('touchstart',()=>{
+    over_over.addEventListener(touchstart,()=>{
         window.location.href = 'home.html';
     })
 
-    over_again.addEventListener('touchstart',()=>{
+    over_again.addEventListener(touchstart,()=>{
         window.location.href = 'index.html';
     })
 
-    over_relife.addEventListener('touchstart',()=>{
+    over_relife.addEventListener(touchstart,()=>{
         hidden_node('over');
         add_oil(PlayScoreCofing.oil);
         gaming = true;
