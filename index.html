@@ -892,19 +892,19 @@
                 var speed = self_seepd - player_speed;
                 item.position.z -= frame * speed;
 
-                setCarShaBaoEnable(item,item.m_Crash);
-                if(item.m_Crash)
-                {
-                    if (item.m_SpeedOffset > 0) {
-                        item.m_SpeedOffset = Math.lerp(item.m_SpeedOffset, 0, 0.2);
-                    }
-                    if(item.m_SpeedOffset == 0)
-                    {
-                        pushCachedObject(item);
-                        item.m_Crash=false;
-                    }
-                    continue;
-                }
+                // setCarShaBaoEnable(item,item.m_Crash);
+                // if(item.m_Crash)
+                // {
+                //     if (item.m_SpeedOffset > 0) {
+                //         item.m_SpeedOffset = Math.lerp(item.m_SpeedOffset, 0, 0.2);
+                //     }
+                //     if(item.m_SpeedOffset == 0)
+                //     {
+                //         pushCachedObject(item);
+                //         item.m_Crash=false;
+                //     }
+                //     continue;
+                // }
                 // if (item.x != item.position.x) {
                 //     item.position.x += GameConfig.m_CarHorizontalSpeed * frame * item.direction;
                 //     if (item.direction > 0 && item.position.x > item.x) {
