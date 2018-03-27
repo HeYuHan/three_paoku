@@ -586,7 +586,11 @@
                 });
                 mesh.add(model);
                 model.rotation.set(0, -Math.PI * 0.5, 0);
-                
+                model.traverse(function (child) {
+                    if (child.isMesh) {
+                        child.material = shaderMaterial;
+                    }
+                });
                 mesh.m_CarModel=model;
             });
             
