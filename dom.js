@@ -13,6 +13,13 @@ function show_node(name){
 
 function hidden_node(name){
     var node = get_node(name);
-    node.className = node.className.replace('show',' hidden');
+    var cn = node.className;
+    if(cn.match('show')){
+        cn = cn.replace('show',' hidden');
+    }else{
+        cn += ' hidden';
+    }
+    node.className = cn;
+
 }
 

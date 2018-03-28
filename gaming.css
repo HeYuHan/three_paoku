@@ -141,6 +141,38 @@ p{
     margin-left: 1.1019rem;
 }
 
+.gg{
+    position: absolute;
+    width: 8rem;
+    height: 9.537rem;
+    left: 1.1111rem;
+    top:3.9815rem;
+    background-image: url(res/texture/game_over/huodongbg.png);
+    background-size: 100% 100%;
+    background-repeat: no-repeat;
+    z-index: 99;
+}
+
+.close{
+    position: absolute;
+    width: 0.3981rem;
+    height: 0.3981rem;
+    right: 0.1481rem;
+    top:0.1481rem;
+    background-image: url(res/texture/game_over/btn_closed.png);
+    background-size: 100% 100%;
+    background-repeat: no-repeat; 
+    background-color: transparent;
+}
+
+.guanggao_c{
+    position: absolute;
+    width: 7.4074rem;
+    height: 7.4074rem;
+    left: 0.2963rem;
+    top:1.4444rem;
+}
+
 #world {
     position: absolute;
     width: 100%;
@@ -180,13 +212,29 @@ p{
 }
 
 .left {
-    background-image: url(res/texture/gaming/anjian_left.png);
+
     left: 10%;
 }
 
 .right {
-    background-image: url(res/texture/gaming/anjian_right.png);
+
     right: 10%;
+}
+
+.leftn{
+    background-image: url(res/texture/gaming/anjian_left.png);
+}
+
+.rightn{
+    background-image: url(res/texture/gaming/anjian_right.png);
+}
+
+.lefta{
+    background-image: url(res/texture/gaming/anjian_lefta.png);
+}
+
+.righta{
+    background-image: url(res/texture/gaming/anjian_righta.png);
 }
 
 .score_box {
@@ -287,3 +335,4 @@ p{
     background-size: 100% 100%;
     background-repeat: no-repeat;
 }
+

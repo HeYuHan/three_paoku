@@ -124,3 +124,19 @@ p{
     bottom: 2.2222rem;
     background-image: url(res/texture/home/home_g.png);
 }
+
+.logo1{
+    position: absolute;
+    width: 9.9537rem;
+    height: 4.1481rem;
+    left: 0.0185rem;
+    top: 2.5rem;
+}
+
+.logo2{
+    position: absolute;
+    width: 2.4259rem;
+    height: 0.25rem;
+    bottom: 0.2593rem;
+    left: 3.787rem;
+}
