@@ -99,6 +99,16 @@
         }
     </script>
 
+    <script type="x-shader/x-vertex" id="uvanivertex">
+        varying vec2 vUv;
+        uniform vec2 offsetUV;
+        void main() {
+            
+            vUv = uv+offsetUV;
+            gl_Position = projectionMatrix * modelViewMatrix * vec4( position, 1.0 );
+        }
+    </script>
+
     <script type="x-shader/x-fragment" id="costomfragment">
         varying vec2 vUv;
         uniform sampler2D ColorMap;
@@ -205,7 +215,7 @@
                 m_Texture: "res/texture/yuanjing_bg.jpg",
                 m_Width: 640,
                 m_Height: 960,
-                m_PositionOffset: [0, 0, 0]
+                m_PositionOffset: [0, -100, 0]
             },
             m_Road: {
                 m_Model: "res/models/road/sa_0323.fbx",
@@ -258,6 +268,21 @@
                     m_Width: 3,
                     m_Height: 3
                 }
+            },
+            m_AD:{
+                m_ModelAD:{
+                    m_Texture:"res/texture/ad/tiet.png",
+                    m_Model:"res/models/ad/ad.fbx"
+                },
+                m_Plane:[
+                    {
+                        m_Texture:"res/texture/ad/tianqiao_a.png",
+                        m_Width:25,
+                        m_Height:15,
+                        m_Position: PositionType.Center,
+                        m_PositionOffset:[0,-1,0]
+                    }
+                ]
             },
             m_Buildings: {
                 m_Scale: 0.05,
@@ -387,12 +412,13 @@
         }
         ///////////////////////////////////////////////////////////////////////////////////////
         var GameConfig = {
+            m_RoadHeight:0,
             m_RoadLength: 500,
             m_RoadWidth: 10,
             m_RoadExpandWidth: 16,
             m_BuildingDistance: 10,
             m_EnemyCarSpeed: 100,
-            m_CarMaxSpeed: 200,
+            m_CarMaxSpeed: 100,
             m_CarHorizontalSpeed: 10,
             m_CarAcceleration: 100,
             m_CarPosition: [0, 0, -33],
@@ -400,7 +426,9 @@
             m_CarCrashSpeedOffset: 175,
             m_CarRoadCount: 3,
             m_MaxOil: 100,
-            long_touch_time: 50
+            m_ADDistance:40,
+            long_touch_time: 50,
+            
 
         }
         ///////////////////////////////////////////////////////////////////////////////////////////
@@ -427,7 +455,8 @@
             Accelerate: 4,
             Oil: 5,
             CrashParitcle: 6,
-            Ai: 7
+            Ai: 7,
+            AD:8,
         }
 
         var CACHED_OBJECT = [];
@@ -514,6 +543,8 @@
         var item_refresh_time = 0;
         var item_refresh_index = 0;
         var carsh_time_id = null;
+        var ad_create_dis=0;
+        var ad_index=0;
 
 
         function init() {
@@ -535,6 +566,49 @@
             var size = renderer.getSize();
             container = document.getElementById('world');
             container.appendChild(renderer.domElement);
+        }
+        function createModel(model_url,mat){
+            var mesh = new THREE.Object3D();
+            LoadModel(model_url, model => {
+                model = model.clone();
+                mesh.add(model);
+                model.traverse(function (child) {
+                    if (child.isMesh) {
+                        child.material = mat;
+                    }
+                });
+                mesh.model = model;
+            });
+            return mesh;
+        }
+        function setAD(ad,positionType){
+            if(positionType == PositionType.Right){
+                ad.rotation.set(0,-Math.PI*0.5,0);
+                ad.position.set(GameConfig.m_RoadExpandWidth*0.5-1,2,0);
+            }
+            else{
+                ad.rotation.set(0,Math.PI*0.5,0);
+                ad.position.set(-GameConfig.m_RoadExpandWidth*0.5+1,2,0);
+            }
+        }
+        function createAD(res,isCenter){
+            if(!isCenter){
+                var shaderMaterial = new THREE.ShaderMaterial({
+                    uniforms: {
+                        offsetUV:{value:new THREE.Vector2(0,Math.floor(Math.random()*2)/2.0)},
+                        ColorMap: { value: LoadTexture(res.m_Texture) }
+                    },
+                    vertexShader: document.getElementById('uvanivertex').textContent,
+                    fragmentShader: document.getElementById('costomfragment').textContent
+                });
+                var ad = createModel(res.m_Model,shaderMaterial);
+                
+                return ad;
+                
+            }
+            else{
+                return createBuilding(res,true)
+            }
         }
         function screenToWorldPosition(sx, sy, dis) {
             return new THREE.Vector3(sx, sy, dis / 1000).unproject(camera);
@@ -565,7 +639,7 @@
                 scene.add(group);
                 model.scale.set(1, 1, scale);
                 model.rotation.set(0, -Math.PI, 0);
-                model.position.set(0, 0, GameConfig.m_RoadLength);
+                model.position.set(0, GameConfig.m_RoadHeight, GameConfig.m_RoadLength);
             });
         }
         function createSprite(width, height, src) {
@@ -630,10 +704,11 @@
             return mesh;
         }
 
-        function createBuilding(building) {
+        function createBuilding(building,isModel) {
             var mesh = new THREE.Object3D();
-            var width = GameResConfig.m_Buildings.m_Scale * building.m_Width;
-            var height = GameResConfig.m_Buildings.m_Scale * building.m_Height;
+            var scale=isModel?1:GameResConfig.m_Buildings.m_Scale;
+            var width = scale * building.m_Width;
+            var height = scale * building.m_Height;
             var geometry = new THREE.PlaneGeometry(width, height, 1, 1);
             var shaderMaterial = new THREE.ShaderMaterial({
                 uniforms: {
@@ -655,7 +730,7 @@
             }
             else if (building.m_Position == PositionType.Center) {
                 model.position.set(0, building.m_PositionOffset[1] + height * 0.5, building.m_PositionOffset[2]);
-                mesh.position.set(GameConfig.m_RoadExpandWidth * 0.5, 0, -60);
+                mesh.position.set(0, 0, -60);
             }
             return mesh;
         }
@@ -773,6 +848,7 @@
             if (cache_data.m_Type == CacheType.Gold) return createGold(cache_data.m_Res.m_Texture);
             if (cache_data.m_Type == CacheType.Oil) return createOil(cache_data.m_Res.m_Texture);
             if (cache_data.m_Type == CacheType.Ai) return createProps('m_Ai', cache_data.m_Res.m_Texture, );
+            if(cache_data.m_Type == CacheType.AD)return createAD(cache_data.m_Res,cache_data.m_IsCenter);
 
             if (cache_data.m_Type == CacheType.CrashParitcle) {
                 return createSprite(cache_data.m_Res.m_Width, cache_data.m_Res.m_Height, cache_data.m_Res.m_Texture);
@@ -808,6 +884,47 @@
                 var uv_offset = d2 / GameConfig.m_RoadLength;
                 road_material_arg.offsetUV.value = new THREE.Vector2(0, -uv_offset);
 
+            }
+            //create ad
+            ad_create_dis-=car_speed*frame;
+            if(ad_create_dis <=0){
+                ad_create_dis=GameConfig.m_ADDistance;
+                var index = (ad_index++)%2;
+                if(index == 0){
+                    var cache_data = {
+                        m_Res: GameResConfig.m_AD.m_Plane[0],
+                        m_Type: CacheType.AD,
+                        m_IsCenter:true
+                    }
+                    var ad = getCachedObject(cache_data);
+                    ad.m_CachedTag = cache_data;
+                    ad.visible = true;
+                    ad.position.z = -GameConfig.m_RoadLength;
+                    scene.add(ad);
+                    left_ad_list.push(ad);
+                }
+                else{
+                    var cache_data = {
+                        m_Res: GameResConfig.m_AD.m_ModelAD,
+                        m_Type: CacheType.AD
+                    }
+                    var ad1 = getCachedObject(cache_data);
+                    ad1.m_CachedTag = cache_data;
+                    var ad2 = getCachedObject(cache_data);
+                    ad2.m_CachedTag = cache_data;
+
+                    setAD(ad1,PositionType.Left);
+                    setAD(ad2,PositionType.Right);
+
+                    ad1.position.z = -GameConfig.m_RoadLength;
+                    scene.add(ad1);
+                    left_ad_list.push(ad1);
+                    ad2.position.z = -GameConfig.m_RoadLength;
+                    scene.add(ad2);
+                    left_ad_list.push(ad2);
+                    
+                }
+                
             }
             //update left_ad
             var temp_left_ad_list = [];
