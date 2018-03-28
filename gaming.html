@@ -462,7 +462,7 @@
             //难度提升km/s
             speedUp: 2,
             //ai侦测距离
-            aiY: 40,
+            aiY: 30,
             //ai 时间
             ai_time: 10,
             //闪避时间
@@ -973,7 +973,7 @@
 
                 // }
 
-                if (!move_ai && Math.abs(player_car.position.x - item.position.x) < GameResConfig.m_Car.m_Width && Math.abs(item.position.z - player_car.position.z) < PlayScoreCofing.aiY) {
+                if (!move_ai && Math.abs(player_car.position.x - item.position.x) < GameResConfig.m_Car.m_Width && Math.abs(item.position.z - player_car.position.z) < (PlayScoreCofing.aiY * frame *Math.abs(speed))) {
                     if (ai_drive) {
                         var car_ran_pst = 1;
                         if (player_car.position.x > 1) {
