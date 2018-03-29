@@ -32,14 +32,14 @@ function set_over() {
     })
 
     over_relife.addEventListener(touchstart, () => {
-        if(PlayScoreCofing.revive > 0){
+        if (PlayScoreCofing.revive > 0) {
             hidden_node('over');
             show_node('gg');
         }
     })
 }
 
-function set_gaunggao(){
+function set_gaunggao() {
     var close = get_node('close');
     var guanggao = get_node('guanggao');
     var web_g = get_node('web_g');
@@ -56,13 +56,13 @@ function set_gaunggao(){
         show_node('web_g');
     })
     // web_g.addEventListener(touchstart, () => {
-        
+
     // })
 }
 
-function set_revive_gray(){
+function set_revive_gray() {
     var revive = get_node('over_relife');
-    revive.style.backgroundImage = 'url(res/texture/game_over/btn_rd.png)'; 
+    revive.style.backgroundImage = 'url(res/texture/game_over/btn_rd.png)';
 }
 
 function set_score() {
@@ -79,11 +79,10 @@ function update_oil_img(value) {
 function play_audio_main() {
     var main = get_node('audio_b');
     var rn = get_node('audio_run_n');
-    play_audio_auto([main]);
+    //play_audio_auto([main]);
 }
 
 function play_audio_auto(audios) {
-    return;
     if (window.WeixinJSBridge) {
         WeixinJSBridge.invoke('getNetworkType', {}, function (e) {
             audios.forEach(element => {
@@ -122,7 +121,7 @@ function play_engine(hi) {
     if (!audio.currentTime) {
         audio.play();
         pause.pause();
-      
+
     }
 }
 
@@ -141,13 +140,9 @@ function play_loop() {
 }
 
 function play_audio(name) {
-    var audio = get_node(name);
-    try {
-        audio.load();
-        audio.play();
-    } catch (error) {
-
-    }
+    var audio = get_node(name).cloneNode();
+    audio.load();
+    audio.play();
 
 }
 
@@ -156,7 +151,7 @@ function pause_audio(naem) {
     audio.pause();
 }
 
-function replace_node(old,now,name){
+function replace_node(old, now, name) {
     var node = get_node(name);
-    node.className = node.className.replace(old,now);
+    node.className = node.className.replace(old, now);
 }
