@@ -101,10 +101,14 @@
 
     <script type="x-shader/x-vertex" id="uvanivertex">
         varying vec2 vUv;
-        uniform vec2 offsetUV;
+        uniform vec4 offsetUV;
         void main() {
             
-            vUv = uv+offsetUV;
+            vUv = uv;
+            vUv.x *= offsetUV.x;
+            vUv.y *= offsetUV.y;
+            vUv.x += offsetUV.z;
+            vUv.y += offsetUV.w;
             gl_Position = projectionMatrix * modelViewMatrix * vec4( position, 1.0 );
         }
     </script>
@@ -218,8 +222,8 @@
                 m_PositionOffset: [0, -100, 0]
             },
             m_Road: {
-                m_Model: "res/models/road/sa_0323.fbx",
-                m_Texture: "res/texture/road/sa_0323.png",
+                m_Model: "res/models/road/sa_0330.fbx",
+                m_Texture: "res/texture/road/zxz.png",
                 m_Width: 14,
                 m_Height: 5
             },
@@ -259,9 +263,14 @@
                     m_Height: 3
                 },
                 m_WeiQi: {
-                    m_Texture: "res/texture/gaming/weiqi_m.png",
-                    m_Width: 2,
-                    m_Height: 5
+                    m_Texture: "res/texture/effect/weiqi_256_h.png",
+                    m_Width: 5,
+                    m_Height: 5,
+                    m_Col:3,
+                    m_Row:2,
+                    m_Loop:true,
+                    m_Time:0.05,
+                    m_Count:6
                 },
                 m_ShaBao: {
                     m_Texture: "res/texture/gaming/shabao.png",
@@ -543,6 +552,7 @@
         var carsh_time_id = null;
         var ad_create_dis = 0;
         var ad_index = 0;
+        var sprite_animation_list=[];
 
 
         function init() {
@@ -593,7 +603,7 @@
             if (!isCenter) {
                 var shaderMaterial = new THREE.ShaderMaterial({
                     uniforms: {
-                        offsetUV: { value: new THREE.Vector2(0, Math.floor(Math.random() * 2) / 2.0) },
+                        offsetUV: { value: new THREE.Vector4(1,1,0, Math.floor(Math.random() * 2) / 2.0) },
                         ColorMap: { value: LoadTexture(res.m_Texture) }
                     },
                     vertexShader: document.getElementById('uvanivertex').textContent,
@@ -801,6 +811,52 @@
             model.position.set(offset.x, offset.y, -1000);
             scene.add(model);
         }
+        function setAnimationMaterialByIndex(animation,index){
+            var offset = animation.material.uniforms.offsetUV;
+            index=index%animation.m_FrameCount;
+            var row=Math.floor(index/animation.m_Col);
+            var offset_x=(index - row*animation.m_Col)/animation.m_Col;
+            var offset_y=row/animation.m_Row;
+            //offset.value = new THREE.Vector4(1,1,0,0);
+            // offset.value = new THREE.Vector4(offset.value.x,offset.value.y,offset_x,offset_y);
+            // console.log(offset);
+            offset.value.z=offset_x;
+            offset.value.w=offset_y;
+        }
+        function createSpriteAnimationMaterial(res,col,row,count,time,loop){
+            var animation={};
+            animation.m_FrameCount=count;
+            animation.m_Col=col;
+            animation.m_Row=row;
+            animation.m_Time=time;
+            animation.m_Loop=loop;
+            animation.m_RunTime=0;
+            animation.m_FrameLength=time/count;
+            animation.m_FrameIndex=1;
+            var shaderMaterial = new THREE.ShaderMaterial({
+                uniforms: {
+                    offsetUV:{value:new THREE.Vector4(1.0/col,-1.0/row,0,0)},
+                    ColorMap: { value: LoadTexture(res) }
+                },
+                vertexShader: document.getElementById('uvanivertex').textContent,
+                fragmentShader: document.getElementById('costomfragment').textContent,
+                transparent:true
+            });
+            animation.material=shaderMaterial;
+            return animation;
+        }
+        function setTestPosition(obj){
+            obj.position.z=-50;
+        }
+        function createSpriteAnimation(sprite){
+            var geometry = new THREE.PlaneGeometry(sprite.m_Width, sprite.m_Height, 1, 1);
+            var animation = createSpriteAnimationMaterial(sprite.m_Texture,sprite.m_Col,sprite.m_Row,sprite.m_Count,sprite.m_Time,sprite.m_Loop);
+            var model = new THREE.Mesh(geometry,animation.material);
+            model.animation=animation;
+            model.position.y+=sprite.m_Height*0.5;
+            sprite_animation_list.push(model);
+            return model;
+        }
         function createEnemyCar() {
             for (var i = 0; i < 3; i++) {
                 //var road_start = parseInt(Math.random() * GameConfig.m_RoadLength);
@@ -870,6 +926,20 @@
         }
         Math.lerp = function (a, b, t) {
             return a + (b - a) * t;
+        }
+        function updateSpriteAnimation(frame){
+            for(var i=0;i<sprite_animation_list.length;i++){
+                var sprite=sprite_animation_list[i];
+                if(sprite.visible){
+                    var animation = sprite.animation;
+                    animation.m_RunTime+=frame;
+                    if(animation.m_RunTime>= animation.m_FrameLength){
+                        animation.m_RunTime=0;
+                        animation.m_FrameIndex++;
+                        setAnimationMaterialByIndex(animation,animation.m_FrameIndex);
+                    }
+                }
+            }
         }
         function updateFollowCarPosition(frame) {
 
@@ -1065,6 +1135,8 @@
                 show_node('over');
 
             }
+            //update sprite animation
+            updateSpriteAnimation(frame);
             //update car
             if (player_car) {
                 this.carMove(frame);
@@ -1585,6 +1657,10 @@
         player_car.PositionType = PositionType.Center;
         scene.add(player_car);
         play_audio_main();
+        var sprite=createSpriteAnimation(GameResConfig.m_Effect.m_WeiQi);
+        scene.add(sprite);
+        setTestPosition(sprite);
+        setAnimationMaterialByIndex(sprite.animation,3);
         // var building = createBuilding(GameResConfig.m_Buildings[0]);
         // scene.add(building);
         window.onload = function () {
