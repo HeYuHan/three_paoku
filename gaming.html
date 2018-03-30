@@ -936,11 +936,20 @@
                     if(animation.m_RunTime>= animation.m_FrameLength){
                         animation.m_RunTime=0;
                         animation.m_FrameIndex++;
+                        if(animation.m_FrameIndex>animation.m_FrameCount){
+                            animation.m_RunTime=0;
+                            animation.m_FrameIndex=1;
+                            sprite.visible=false;
+                            continue;
+                        }
                         setAnimationMaterialByIndex(animation,animation.m_FrameIndex);
+
                     }
                 }
             }
         }
+
+
         function updateFollowCarPosition(frame) {
 
             var car_speed = getCarSpeed();
