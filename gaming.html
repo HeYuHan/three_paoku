@@ -257,19 +257,34 @@
                 m_h: 1,
             },
             m_Effect: {
-                m_CarCrash: {
-                    m_Texture: "res/texture/gaming/pengzhuang_ef.png",
+                m_Gold: {
+                    m_Texture: "res/texture/effect/jinbi02_256.png",
                     m_Width: 4,
-                    m_Height: 3
+                    m_Height: 4,
+                    m_Col:4,
+                    m_Row:2,
+                    m_Loop:false,
+                    m_Time:0.6,
+                    m_Count:8
+                },
+                m_CarCrash: {
+                    m_Texture: "res/texture/effect/pengzhuang02_256.png",
+                    m_Width: 4,
+                    m_Height: 4,
+                    m_Col:4,
+                    m_Row:2,
+                    m_Loop:false,
+                    m_Time:0.6,
+                    m_Count:8
                 },
                 m_WeiQi: {
                     m_Texture: "res/texture/effect/weiqi_256_h.png",
-                    m_Width: 5,
-                    m_Height: 5,
+                    m_Width: 2,
+                    m_Height: 8,
                     m_Col:3,
                     m_Row:2,
                     m_Loop:true,
-                    m_Time:0.05,
+                    m_Time:0.1,
                     m_Count:6
                 },
                 m_ShaBao: {
@@ -543,7 +558,7 @@
         var car_move_totle_length = 0;
         var road_material_arg = null;
         var update_last_time = 0;
-        var particle_list = [];
+        //var particle_list = [];
         var left_ad_list = [];
         var enemy_car_list = [];
         var static_item_list = [];
@@ -676,16 +691,53 @@
             car.m_ShaBao.visible = enable ? true : false;
             if (car.m_CarModel) car.m_CarModel.visible = !enable;
         }
-        function setCarWeiQiEnable(car, enable) {
-            if (!car.m_WeiQi) {
-                var res = GameResConfig.m_Effect.m_WeiQi;
-                var weiqi = createSprite(res.m_Width, res.m_Height, res.m_Texture);
-                car.add(weiqi);
-                weiqi.rotation.set(-Math.PI * 0.5, 0, 0);
-                weiqi.position.set(0, 0.5, res.m_Height * 0.5 + GameResConfig.m_Car.m_Height);
-                car.m_WeiQi = weiqi;
+        function setCarCrashEffectEnable(car, enable) {
+            if (!car.m_CrashEffect) {
+                var res=GameResConfig.m_Effect.m_CarCrash;
+                var crash=createSpriteAnimation(res);
+                car.add(crash);
+                car.m_CrashEffect = crash;
+                crash.position.set(0,1.5,-GameResConfig.m_Car.m_Height*0.5);
             }
-            car.m_WeiQi.visible = enable;
+            if(enable){
+                car.m_CrashEffect.visible=true;
+                car.m_CrashEffect.animation.m_RunTime=0;
+                car.m_CrashEffect.animation.m_FrameIndex=1;
+            }
+
+        }
+        function setCarGoldffectEnable(car, enable) {
+            if (!car.m_GoldEffect) {
+                var res=GameResConfig.m_Effect.m_Gold;
+                var crash=createSpriteAnimation(res);
+                car.add(crash);
+                car.m_GoldEffect = crash;
+                crash.position.set(0,1.5,-GameResConfig.m_Car.m_Height*0.5);
+            }
+            if(enable){
+                car.m_GoldEffect.visible=true;
+                //car.m_GoldEffect.animation.m_RunTime=0;
+                //car.m_GoldEffect.animation.m_FrameIndex=1;
+            }
+
+        }
+        function setCarWeiQiEnable(car, enable) {
+            if (!car.m_WeiQiLeft) {
+                var res=GameResConfig.m_Effect.m_WeiQi;
+                var weiqi=createSpriteAnimation(res);
+                car.add(weiqi);
+                weiqi.rotation.set(-Math.PI*0.5, 0, Math.PI);
+                weiqi.position.set(-0.5, 0.5, res.m_Height * 0.5 + GameResConfig.m_Car.m_Height*0.5);
+                car.m_WeiQiLeft = weiqi;
+
+                weiqi=createSpriteAnimation(res);
+                car.add(weiqi);
+                weiqi.rotation.set(-Math.PI*0.5, 0, Math.PI);
+                weiqi.position.set(0.5, 0.5, res.m_Height * 0.5 + GameResConfig.m_Car.m_Height*0.5);
+                car.m_WeiqiRight = weiqi;
+            }
+            car.m_WeiQiLeft.visible = enable;
+            car.m_WeiqiRight.visible = enable;
         }
         function createCar(src, clone_mode) {
             var mesh = new THREE.Object3D();
@@ -938,7 +990,7 @@
                         animation.m_FrameIndex++;
                         if(animation.m_FrameIndex>animation.m_FrameCount){
                             animation.m_RunTime=0;
-                            animation.m_FrameIndex=1;
+                            animation.m_FrameIndex=0;
                             sprite.visible=false;
                             continue;
                         }
@@ -1085,21 +1137,21 @@
             static_item_list = temp_static_item;
 
             //effect
-            var temp_paritcle_list = [];
-            for (var i = 0; i < particle_list.length; i++) {
-                var p = particle_list[i];
-                p.position.z += frame * getCarSpeed();
-                if (chekcRunEnd(p)) {
-                    //console.log('end',item.position.x);
-                    pushCachedObject(p);
+            // var temp_paritcle_list = [];
+            // for (var i = 0; i < particle_list.length; i++) {
+            //     var p = particle_list[i];
+            //     p.position.z += frame * getCarSpeed();
+            //     if (chekcRunEnd(p)) {
+            //         //console.log('end',item.position.x);
+            //         pushCachedObject(p);
 
-                }
-                else {
-                    temp_static_item.push(p);
-                    p.material.uniforms.Alpha = Math.lerp(1, 0, (-p.position.z / GameConfig.m_CameraPosition[2]));
-                }
-            }
-            particle_list = temp_paritcle_list;
+            //     }
+            //     else {
+            //         temp_static_item.push(p);
+            //         p.material.uniforms.Alpha = Math.lerp(1, 0, (-p.position.z / GameConfig.m_CameraPosition[2]));
+            //     }
+            // }
+            // particle_list = temp_paritcle_list;
 
         }
 
@@ -1113,6 +1165,7 @@
                     play_audio('audio_coin');
                     this.add_coin();
                     pushCachedObject(item);
+                    setCarGoldffectEnable(player_car,true);
                 } else if (item.m_Type == ItemType.Oil) {
                     play_audio('audio_oil');
                     this.add_oil(PlayScoreCofing.oil_add);
@@ -1287,17 +1340,18 @@
                         this.update_oil(-PlayScoreCofing.collideOil);
                         ///////////////////////////////////////////////////
                         //crash effect
-                        var cache_data = {
+                        // var cache_data = {
 
-                            m_Res: GameResConfig.m_Effect.m_CarCrash,
-                            m_Type: CacheType.CrashParitcle
+                        //     m_Res: GameResConfig.m_Effect.m_CarCrash,
+                        //     m_Type: CacheType.CrashParitcle
 
-                        }
-                        var particle = getCachedObject(cache_data);
-                        particle.m_CachedTag = cache_data;
-                        scene.add(particle);
-                        particle.position.set(item.position.x, item.position.y, item.position.z);
-                        particle_list.push(particle);
+                        // }
+                        // var particle = getCachedObject(cache_data);
+                        // particle.m_CachedTag = cache_data;
+                        // scene.add(particle);
+                        // particle.position.set(item.position.x, item.position.y, item.position.z);
+                        // particle_list.push(particle);
+                        setCarCrashEffectEnable(player_car,true);
                     }
 
                 }
@@ -1666,10 +1720,11 @@
         player_car.PositionType = PositionType.Center;
         scene.add(player_car);
         play_audio_main();
-        var sprite=createSpriteAnimation(GameResConfig.m_Effect.m_WeiQi);
-        scene.add(sprite);
-        setTestPosition(sprite);
-        setAnimationMaterialByIndex(sprite.animation,3);
+        // var res=GameResConfig.m_Effect.m_Gold;
+        // var crash=createSpriteAnimation(res);
+        // setTestPosition(crash);
+        // setAnimationMaterialByIndex(crash.animation,3);
+        // scene.add(crash);
         // var building = createBuilding(GameResConfig.m_Buildings[0]);
         // scene.add(building);
         window.onload = function () {
