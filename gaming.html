@@ -398,14 +398,6 @@
                         m_Width: 264,
                         m_Height: 1170,
                         m_PositionOffset: [0, 0, 0]
-                    },
-                    {
-                        m_Type: BuildingType.AD,
-                        m_Position: PositionType.Right,
-                        m_Texture: "res/texture/building/r_b06.png",
-                        m_Width: 246,
-                        m_Height: 701,
-                        m_PositionOffset: [0, 0, 0]
                     }
                 ]
             }
@@ -728,11 +720,11 @@
             mesh.add(model);
             if (building.m_Position == PositionType.Left) {
                 model.position.set(building.m_PositionOffset[0] - width * 0.5, building.m_PositionOffset[1] + height * 0.5, building.m_PositionOffset[2]);
-                mesh.position.set(-GameConfig.m_RoadExpandWidth * 0.5, 0, -60);
+                mesh.position.set(-GameConfig.m_RoadExpandWidth * 0.5-1, -6, -60);
             }
             else if (building.m_Position == PositionType.Right) {
                 model.position.set(building.m_PositionOffset[0] + width * 0.5, building.m_PositionOffset[1] + height * 0.5, building.m_PositionOffset[2]);
-                mesh.position.set(GameConfig.m_RoadExpandWidth * 0.5, 0, -60);
+                mesh.position.set(GameConfig.m_RoadExpandWidth * 0.5+1, -6, -60);
             }
             else if (building.m_Position == PositionType.Center) {
                 model.position.set(0, building.m_PositionOffset[1] + height * 0.5, building.m_PositionOffset[2]);
