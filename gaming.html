@@ -273,25 +273,35 @@
                 m_h: 1,
             },
             m_Effect: {
+                m_Oil: {
+                    m_Texture: "res/texture/effect/jiayou_256_h.png",
+                    m_Width: 4,
+                    m_Height: 4,
+                    m_Col:5,
+                    m_Row:4,
+                    m_Loop:false,
+                    m_Time:0.3,
+                    m_Count:20
+                },
                 m_Gold: {
                     m_Texture: "res/texture/effect/jinbi02_256.png",
                     m_Width: 4,
                     m_Height: 4,
-                    m_Col: 4,
-                    m_Row: 2,
-                    m_Loop: false,
-                    m_Time: 0.6,
-                    m_Count: 8
+                    m_Col:4,
+                    m_Row:2,
+                    m_Loop:false,
+                    m_Time:0.2,
+                    m_Count:8
                 },
                 m_CarCrash: {
                     m_Texture: "res/texture/effect/pengzhuang02_256.png",
                     m_Width: 4,
                     m_Height: 4,
-                    m_Col: 4,
-                    m_Row: 2,
-                    m_Loop: false,
-                    m_Time: 0.6,
-                    m_Count: 8
+                    m_Col:4,
+                    m_Row:2,
+                    m_Loop:false,
+                    m_Time:0.3,
+                    m_Count:8
                 },
                 m_WeiQi: {
                     m_Texture: "res/texture/effect/weiqi_256_h.png",
@@ -765,6 +775,21 @@
             }
 
         }
+        function setCarOilEffectEnable(car, enable) {
+            if (!car.m_OilEffect) {
+                var res=GameResConfig.m_Effect.m_Oil;
+                var crash=createSpriteAnimation(res);
+                car.add(crash);
+                car.m_OilEffect = crash;
+                crash.position.set(0,1.5,-GameResConfig.m_Car.m_Height*0.5);
+            }
+            if(enable){
+                car.m_OilEffect.visible=true;
+                car.m_OilEffect.animation.m_RunTime=0;
+                car.m_OilEffect.animation.m_FrameIndex=1;
+            }
+
+        }
         function setCarGoldffectEnable(car, enable) {
             if (!car.m_GoldEffect) {
                 var res = GameResConfig.m_Effect.m_Gold;
@@ -949,19 +974,19 @@
             //offset.value = new THREE.Vector4(1,1,0,0);
             // offset.value = new THREE.Vector4(offset.value.x,offset.value.y,offset_x,offset_y);
             // console.log(offset);
-            offset.value.z = offset_x;
-            offset.value.w = offset_y;
+            offset.value.z=offset_x;
+            offset.value.w=offset_y;
         }
-        function createSpriteAnimationMaterial(res, col, row, count, time, loop) {
-            var animation = {};
-            animation.m_FrameCount = count;
-            animation.m_Col = col;
-            animation.m_Row = row;
-            animation.m_Time = time;
-            animation.m_Loop = loop;
-            animation.m_RunTime = 0;
-            animation.m_FrameLength = time / count;
-            animation.m_FrameIndex = 1;
+        function createSpriteAnimationMaterial(res,col,row,count,time,loop){
+            var animation={};
+            animation.m_FrameCount=count;
+            animation.m_Col=col;
+            animation.m_Row=row;
+            animation.m_Time=time;
+            animation.m_Loop=loop;
+            animation.m_RunTime=0;
+            animation.m_FrameLength=time/count;
+            animation.m_FrameIndex=0;
             var shaderMaterial = new THREE.ShaderMaterial({
                 uniforms: {
                     offsetUV: { value: new THREE.Vector4(1.0 / col, -1.0 / row, 0, 0) },
