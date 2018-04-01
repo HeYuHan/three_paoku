@@ -76,31 +76,88 @@ function update_oil_img(value) {
     oil.style.backgroundSize = value + "% 100%";
 }
 
+function show_ai() {
+    var ai = get_node('ai');
+    var left = get_node('ai_left');
+    var right = get_node('ai_right');
+    var time = get_node('ai_time');
+    time.innerHTML = PlayScoreCofing.ai_time;
+    update_ai_time();
+    hidden_node('left_btn');
+    hidden_node('right_btn');
+    //show_node('ai');
+    ai.className = 'ai';
+    if (!left.className.match('run_left_ani')) {
+        left.className += ' run_left_ani';
+        right.className += ' run_right_ani';
+    }
+}
+
+function update_ai_time() {
+    var time = get_node('ai_time');
+    setTimeout(() => {
+        var time_s = time.innerHTML - 1;
+        if (time_s > 0) {
+            time.innerHTML = time_s;
+            update_ai_time();
+        } else {
+            time.innerHTML = 0;
+            //console.log('hidden',time_s);
+            hidden_ai();
+            ai_drive = false;
+        }
+    }, 1000)
+}
+
+function hidden_ai() {
+    var ai = get_node('ai');
+    // hidden_node('ai');
+    ai.className = 'ai hidden';
+    show_node('left_btn');
+    show_node('right_btn');
+}
+
 function play_audio_main() {
     var main = get_node('audio_b');
     var rn = get_node('audio_run_n');
-    //play_audio_auto([main]);
+    var ra = get_node('audio_run_a');
+    play_audio_auto(main, [rn, ra]);
 }
 
-function play_audio_auto(audios) {
+function play_audio_auto(main, audios) {
     if (window.WeixinJSBridge) {
         WeixinJSBridge.invoke('getNetworkType', {}, function (e) {
-            audios.forEach(element => {
-                element.play();
-            });
+            wx_ready = true;
+            check_ready();
+            main.play();
+            audios[0].play();
+            audios[1].play();
+            audios[1].pause();
         }, false);
     } else {
         document.addEventListener("WeixinJSBridgeReady", function () {
             WeixinJSBridge.invoke('getNetworkType', {}, function (e) {
-                audios.forEach(element => {
-                    element.play();
-                });
+                wx_ready = true;
+                check_ready();
+                main.play();
+                audios[0].play();
+                audios[1].play();
+                audios[1].pause();
             });
         }, false);
     }
-    audios.forEach(element => {
-        element.play();
-    });
+    var ua = navigator.userAgent.toLowerCase();
+    if (!ua.match(/MicroMessenger/i)) {
+        wx_ready = true;
+        console.log('wx _check');
+        check_ready();
+    }
+
+    // check_ready();
+    // main.play();
+    // audios[0].play();
+    // audios[1].play();
+    // audios[1].pause();
     return false;
 }
 

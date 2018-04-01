@@ -336,3 +336,79 @@ p{
     background-repeat: no-repeat;
 }
 
+.ai{
+    position: absolute;
+    width: 4.4537rem;
+    height: 0.9259rem;
+    bottom: 20%;
+    left: 2.7685rem;
+    background-image: url(res/texture/ai/zidong.png);
+    background-size: 100% 100%;
+    background-repeat: no-repeat;
+}
+
+.ai_time{
+    text-align: center;
+    line-height: 0.3704rem;
+    color: #fff;
+    font-size: 0.3704rem;
+}
+
+.ai_img{
+    position: absolute;
+    width: 0.8981rem;
+    height: 1.4167rem;
+    left: 1.7778rem;
+    top: -2.7778rem;
+}
+
+.ai_left{
+    position: absolute;
+    left: 0;
+    bottom: 0;
+    width: 1.1852rem;
+    height: 1.1852rem;
+    background-image: url(res/texture/gaming/anjian_left.png);
+    background-size: 100% 100%;
+    background-repeat: no-repeat;
+}
+
+.ai_right{
+    position: absolute;
+    right: 0;
+    bottom: 0;
+    width: 1.1852rem;
+    height: 1.1852rem;
+    background-image: url(res/texture/gaming/anjian_right.png);
+    background-size: 100% 100%;
+    background-repeat: no-repeat;
+}
+
+@keyframes ai_left_ani{
+    50% {transform: translateX(-0.8333rem);background-image: url(res/texture/gaming/anjian_lefta.png);}
+    100% {transform: translateX(0.8333rem);background-image: url(res/texture/gaming/anjian_left.png);}
+}
+@-webkit-keyframes ai_left_ani{
+    50% {transform: translateX(-0.8333rem);background-image: url(res/texture/gaming/anjian_lefta.png);}
+    100% {transform: translateX(0.8333rem);background-image: url(res/texture/gaming/anjian_left.png);}
+}
+
+@keyframes ai_right_ani{
+    50% {-webkit-transform: translateX(0.8333rem);background-image: url(res/texture/gaming/anjian_righta.png);}
+    100% {-webkit-transform: translateX(-0.8333rem);background-image: url(res/texture/gaming/anjian_right.png);}
+}
+@-webkit-keyframes ai_right_ani{
+    50% {-webkit-transform: translateX(0.8333rem);background-image: url(res/texture/gaming/anjian_righta.png);}
+    100% {-webkit-transform: translateX(-0.8333rem);background-image: url(res/texture/gaming/anjian_left.png);}
+}
+
+.run_left_ani{
+    animation: ai_left_ani 1s infinite;
+    -webkit-animation: ai_left_ani 1s infinite;
+}
+
+.run_right_ani{
+    animation: ai_right_ani 1s infinite;
+    -webkit-animation: ai_right_ani 1s infinite;
+}
+
