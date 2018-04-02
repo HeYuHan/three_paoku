@@ -365,7 +365,7 @@ p{
 .ai_left{
     position: absolute;
     left: 0;
-    bottom: 0.26851rem;
+    bottom: -0.26851rem;
     width: 1.1852rem;
     height: 1.1852rem;
     background-image: url(res/texture/gaming/anjian_left.png);
@@ -376,7 +376,7 @@ p{
 .ai_right{
     position: absolute;
     right: 0;
-    bottom: 0.26851rem;
+    bottom: -0.26851rem;
     width: 1.1852rem;
     height: 1.1852rem;
     background-image: url(res/texture/gaming/anjian_right.png);
