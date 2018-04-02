@@ -1392,9 +1392,11 @@
                     show_ai();
                     setAutoDiverEnable(player_car,true);
                     window.clearTimeout(ai_id);
-                    // ai_id = setTimeout(() => {
-
-                    // }, PlayScoreCofing.ai_time * 1000);
+                    ai_id = setTimeout(() => {
+                        setAutoDiverEnable(player_car,false);
+                        hidden_ai();
+                        ai_drive = false;
+                    }, PlayScoreCofing.ai_time * 1000);
                     pushCachedObject(item);
                 } else if (item.m_Type == ItemType.Accelerate) {
                     play_audio('audio_turbo');
