@@ -331,16 +331,21 @@
                 m_Type: ItemType.Ai,
                 m_Texture: "res/texture/item/zidong_daoju.png",
                 m_Size: 1,
-                m_h: 1,
+                m_Height: 1,
             },
 
             m_Accelerate: {
                 m_Type: ItemType.Accelerate,
                 m_Texture: "res/texture/item/jiasu.png",
                 m_Size: 1,
-                m_h: 1,
+                m_Height: 1,
             },
             m_Effect: {
+                m_AutoDiver:{
+                    m_Texture:"res/texture/ai/zidongbiaoji.png",
+                    m_Width:2,
+                    m_Height:3
+                },
                 m_Oil: {
                     m_Texture: "res/texture/effect/jiayou_256_h.png",
                     m_Width: 4,
@@ -848,6 +853,16 @@
             }
 
         }
+        function setAutoDiverEnable(car,enable){
+            if (!car.m_AutoDiver) {
+                var res=GameResConfig.m_Effect.m_AutoDiver;
+                var crash=createSprite(res.m_Width,res.m_Height,res.m_Texture);
+                car.add(crash);
+                car.m_AutoDiver = crash;
+                crash.position.set(0,2,-GameResConfig.m_Car.m_Height*0.5);
+            }
+            car.m_AutoDiver.visible=enable;
+        }
         function setCarOilEffectEnable(car, enable) {
             if (!car.m_OilEffect) {
                 var res=GameResConfig.m_Effect.m_Oil;
@@ -873,22 +888,6 @@
             }
             if (enable) {
                 car.m_GoldEffect.visible = true;
-                //car.m_GoldEffect.animation.m_RunTime=0;
-                //car.m_GoldEffect.animation.m_FrameIndex=1;
-            }
-
-        }
-
-        function setCarOilffectEnable(car, enable) {
-            if (!car.m_OilEffect) {
-                var res = GameResConfig.m_Effect.m_Oil;
-                var crash = createSpriteAnimation(res);
-                car.add(crash);
-                car.m_OilEffect = crash;
-                crash.position.set(0, 1.5, -GameResConfig.m_Car.m_Height * 0.5);
-            }
-            if (enable) {
-                car.m_OilEffect.visible = true;
                 //car.m_GoldEffect.animation.m_RunTime=0;
                 //car.m_GoldEffect.animation.m_FrameIndex=1;
             }
@@ -1016,7 +1015,7 @@
             });
             var model = new THREE.Mesh(geometry, shaderMaterial);
             mesh.add(model);
-            model.position.set(0, GameResConfig[ps].m_h, 0);
+            model.position.set(0, GameResConfig[ps].m_Height*0.5, 0);
             return mesh;
         }
 
@@ -1385,10 +1384,12 @@
                     play_audio('audio_oil');
                     pushCachedObject(item);
                     this.add_oil(PlayScoreCofing.oil_add);
-                    setCarOilffectEnable(player_car, true);
+                    setCarOilEffectEnable(player_car, true);
                 } else if (item.m_Type == ItemType.Ai) {
                     ai_drive = true;
+
                     show_ai();
+                    setAutoDiverEnable(player_car,true);
                     window.clearTimeout(ai_id);
                     // ai_id = setTimeout(() => {
 

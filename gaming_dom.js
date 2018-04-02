@@ -86,11 +86,11 @@ function show_ai() {
     hidden_node('left_btn');
     hidden_node('right_btn');
     //show_node('ai');
-    ai.className = 'ai';
-    if (!left.className.match('run_left_ani')) {
-        left.className += ' run_left_ani';
-        right.className += ' run_right_ani';
-    }
+    // ai.className = 'ai';
+    // if (!left.className.match('run_left_ani')) {
+    //     left.className += ' run_left_ani';
+    //     right.className += ' run_right_ani';
+    // }
 }
 
 function update_ai_time() {
@@ -184,11 +184,11 @@ function play_engine(hi) {
 
 function pause_loop() {
     var main = get_node('audio_b');
-    var rn = get_node('audio_run_n');
-    var ra = get_node('audio_run_a');
+    //var rn = get_node('audio_run_n');
+    //var ra = get_node('audio_run_a');
     main.pause();
-    rn.pause();
-    ra.pause();
+    //rn.pause();
+    //ra.pause();
 }
 
 function play_loop() {
