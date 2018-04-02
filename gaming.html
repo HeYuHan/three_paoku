@@ -189,10 +189,10 @@
             }
 
         }
-        function LoadTexture(src) {
+        function LoadTexture(src,callback) {
             var tex = ResourceCachedList[src];
             if (tex) return tex;
-            tex = new THREE.TextureLoader().load(src);
+            tex = new THREE.TextureLoader().load(src,callback);
             ResourceCachedList[src] = tex;
             tex.magFilter = THREE.LinearFilter;
             tex.minFilter = THREE.LinearFilter;
@@ -225,6 +225,43 @@
                 }
 
             }
+        }
+        function ResourcePreLoad(res_config,callback){
+            var res_list=[];
+            function FilterResource(config){
+                for(var key in config)
+                {
+                    if(key == "m_Texture")
+                    {
+                        res_list.push({
+                            m_Type:1,
+                            m_Path:config[key]
+                        });
+                    }
+                    else if(key == "m_Model"){
+                        res_list.push({
+                            m_Type:2,
+                            m_Path:config[key]
+                        });
+                    }
+                    else if(typeof(config[key]) == "object"){
+                        FilterResource(config[key]);
+                    }
+                }
+
+            }
+            FilterResource(res_config);
+            var load_count=0;
+            for(var i=0;i<res_list.length;i++){
+                var res=res_list[i];
+                if(res.m_Type == 1){
+                    LoadTexture(res.m_Path,()=>{load_count++;if(load_count == res_list.length){callback()}});
+                }
+                else if(res.m_Type == 2){
+                    LoadModel(res.m_Path,()=>{load_count++;if(load_count == res_list.length){callback()}});
+                }
+            }
+
         }
         function CleanResourceCache() {
             ResourceCachedList = [];
@@ -2014,28 +2051,18 @@
             this.set_palyer_score('oil_num', Math.ceil(palyer_score.oil) + ' / 100');
             update_oil_img(palyer_score.oil);
         }
-
-        init();
-
-        RigisterEvent();
-        loop(0);
-        createBackground();
-        createRoad();
-        createEnemyCar();
-        createPlayerCar();
-
-
-
-
-
-        play_audio_main();
-        // var res=GameResConfig.m_Effect.m_Gold;
-        // var crash=createSpriteAnimation(res);
-        // setTestPosition(crash);
-        // setAnimationMaterialByIndex(crash.animation,3);
-        // scene.add(crash);
-        // var building = createBuilding(GameResConfig.m_Buildings[0]);
-        // scene.add(building);
+        ResourcePreLoad(GameResConfig,function(){
+            console.log("resource loaded");
+            init();
+            RigisterEvent();
+            loop(0);
+            createBackground();
+            createRoad();
+            createEnemyCar();
+            createPlayerCar();
+            play_audio_main();
+        })
+        
         window.onload = function () {
             dom_ready = true;
             console.log('dom _check');
