@@ -1647,7 +1647,7 @@
                 else if ((player_car.position.z > item.position.z)
                     && Math.abs(player_car.position.x - item.position.x) < GameResConfig.m_Car.m_Width) {
                     //pushCachedObject(item);
-                    if (Math.abs(player_car.position.z - item.position.z) < GameResConfig.m_Car.m_Height) {
+                    if (Math.abs(player_car.position.z - item.position.z) < GameResConfig.m_Car.m_Height && item.visible) {
 
                         //console.log('carsh', player_car.position.x, item.position.x)
 
