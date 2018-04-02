@@ -244,6 +244,14 @@
                             m_Path:config[key]
                         });
                     }
+                    else if(key == "m_Audio"){
+                        for(var a_key in config[key]){
+                            res_list.push({
+                                m_Type:3,
+                                m_Path:config[key][a_key]
+                            });
+                        }
+                    }
                     else if(typeof(config[key]) == "object"){
                         FilterResource(config[key]);
                     }
@@ -259,6 +267,9 @@
                 }
                 else if(res.m_Type == 2){
                     LoadModel(res.m_Path,()=>{load_count++;{callback(load_count/res_list.length)}});
+                }
+                else if(res.m_Type == 3){
+                    LoadAudio(res.m_Path,()=>{load_count++;{callback(load_count/res_list.length)}});
                 }
             }
 
@@ -290,7 +301,8 @@
         var GameResConfig = {
             m_Audio:{
                 m_EngineHigh:"res/audio/ch-he_car_motion-engine_hi.wav",
-                m_EngineLow:"res/audio/ch-he_car_motion-engine_lo.wav"
+                m_EngineLow:"res/audio/ch-he_car_motion-engine_lo.wav",
+                m_Gold:"res/audio/sc-ev_coin.ogg"
             },
             m_Background: {
                 m_Texture: "res/texture/yuanjing_bg.jpg",
@@ -711,6 +723,7 @@
         var ad_create_dis = 0;
         var ad_index = 0;
         var sprite_animation_list = [];
+        var effect_audio_list=[];
         var engine_high_audio=null;
         var engine_low_audio=null;
         var engien_switch_pitch=0;
@@ -1118,8 +1131,8 @@
             player_car = createCar(GameResConfig.m_Car.m_Texture, true);
             player_car.PositionType = PositionType.Center;
             scene.add(player_car);
-            engine_high_audio=new THREE.PositionalAudio(audiolistener);
-            engine_low_audio=new THREE.PositionalAudio(audiolistener);
+            engine_high_audio=new THREE.Audio(audiolistener);
+            engine_low_audio=new THREE.Audio(audiolistener);
             LoadAudio(GameResConfig.m_Audio.m_EngineHigh,(buffer)=>{
                 engine_high_audio.setBuffer(buffer);
                 engine_high_audio.setLoop(true);
@@ -1134,6 +1147,21 @@
             });
         }
 
+        function palyEffectAudio(src){
+            var audio = effect_audio_list[src];
+            if(audio){
+                audio.offset=0;
+                audio.pause();
+                audio.play();
+            }
+            else {
+                audio = new THREE.Audio(audiolistener);
+                effect_audio_list[src]=audio;
+                LoadAudio(src,(buffer)=>{
+                    effect_audio_list[src].setBuffer(buffer);
+                });
+            }
+        }
 
 
         function getCarSpeed() {
@@ -1372,7 +1400,8 @@
                     clock_item(item.m_Type);
                 }
                 if (item.m_Type == ItemType.Gold) {
-                    play_audio('audio_coin');
+                    palyEffectAudio(GameResConfig.m_Audio.m_Gold);
+                    //play_audio('audio_coin');
                     item.visible = false;
                     this.add_coin(item.rain);
                     pushCachedObject(item);
