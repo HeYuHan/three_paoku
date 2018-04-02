@@ -688,6 +688,7 @@
         var long_move = false;
         var dom_ready = false; 
         var wx_ready = false;
+        var res_ready = false;
 
         var ai_x = GameConfig.m_RoadWidth / 3;
         var forword_speed = 0;
@@ -2062,11 +2063,12 @@
                 createRoad();
                 createEnemyCar();
                 createPlayerCar();
-                play_audio_main();
+                res_ready = true;
+                check_ready();
             }
 
         })
-        
+        play_audio_main();
         window.onload = function () {
             dom_ready = true;
             console.log('dom _check');
@@ -2074,7 +2076,7 @@
         }
         
         function check_ready() {
-            if(dom_ready && wx_ready){
+            if(dom_ready && wx_ready && res_ready){
                 gaming = true;
             }
         }
