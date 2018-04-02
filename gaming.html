@@ -13,8 +13,11 @@
 
 <body>
     <div id="world"></div>
+    <div class="combo hidden">
+        <p class="combo_count"></p>
+    </div>
     <div class="ai hidden">
-<!--         <img class="ai_img" src='res/texture/ai/zidongbiaoji.png'> -->
+        <!--         <img class="ai_img" src='res/texture/ai/zidongbiaoji.png'> -->
         <p class="ai_time">10</p>
         <div class="ai_left"></div>
         <div class="ai_right"></div>
@@ -154,6 +157,7 @@
         function zt() {
             play_audio('audio_ok');
             pause_loop();
+            enginePalyPause(false);
             gaming = false;
             show_node('pause');
         }
@@ -189,17 +193,17 @@
             }
 
         }
-        function LoadTexture(src,callback) {
+        function LoadTexture(src, callback) {
             var tex = ResourceCachedList[src];
             if (tex) return tex;
-            tex = new THREE.TextureLoader().load(src,callback);
+            tex = new THREE.TextureLoader().load(src, callback);
             ResourceCachedList[src] = tex;
             tex.magFilter = THREE.LinearFilter;
             tex.minFilter = THREE.LinearFilter;
             tex.wrapS = tex.wrapT = THREE.RepeatWrapping;
             return tex;
         }
-        function LoadAudio(src,callback){
+        function LoadAudio(src, callback) {
             var buffer = ResourceCachedList[src];
             if (buffer) {
                 callback(buffer);
@@ -226,22 +230,20 @@
 
             }
         }
-        function ResourcePreLoad(res_config,callback){
-            var res_list=[];
-            function FilterResource(config){
-                for(var key in config)
-                {
-                    if(key == "m_Texture")
-                    {
+        function ResourcePreLoad(res_config, callback) {
+            var res_list = [];
+            function FilterResource(config) {
+                for (var key in config) {
+                    if (key == "m_Texture") {
                         res_list.push({
-                            m_Type:1,
-                            m_Path:config[key]
+                            m_Type: 1,
+                            m_Path: config[key]
                         });
                     }
-                    else if(key == "m_Model"){
+                    else if (key == "m_Model") {
                         res_list.push({
-                            m_Type:2,
-                            m_Path:config[key]
+                            m_Type: 2,
+                            m_Path: config[key]
                         });
                     }
                     else if(key == "m_Audio"){
@@ -259,14 +261,14 @@
 
             }
             FilterResource(res_config);
-            var load_count=0;
-            for(var i=0;i<res_list.length;i++){
-                var res=res_list[i];
-                if(res.m_Type == 1){
-                    LoadTexture(res.m_Path,()=>{load_count++;{callback(load_count/res_list.length)}});
+            var load_count = 0;
+            for (var i = 0; i < res_list.length; i++) {
+                var res = res_list[i];
+                if (res.m_Type == 1) {
+                    LoadTexture(res.m_Path, () => { load_count++; { callback(load_count / res_list.length) } });
                 }
-                else if(res.m_Type == 2){
-                    LoadModel(res.m_Path,()=>{load_count++;{callback(load_count/res_list.length)}});
+                else if (res.m_Type == 2) {
+                    LoadModel(res.m_Path, () => { load_count++; { callback(load_count / res_list.length) } });
                 }
                 else if(res.m_Type == 3){
                     LoadAudio(res.m_Path,()=>{load_count++;{callback(load_count/res_list.length)}});
@@ -353,40 +355,40 @@
                 m_Height: 1,
             },
             m_Effect: {
-                m_AutoDiver:{
-                    m_Texture:"res/texture/ai/zidongbiaoji.png",
-                    m_Width:2,
-                    m_Height:3
+                m_AutoDiver: {
+                    m_Texture: "res/texture/ai/zidongbiaoji.png",
+                    m_Width: 2,
+                    m_Height: 3
                 },
                 m_Oil: {
                     m_Texture: "res/texture/effect/jiayou_256_h.png",
                     m_Width: 4,
                     m_Height: 4,
-                    m_Col:5,
-                    m_Row:4,
-                    m_Loop:false,
-                    m_Time:0.3,
-                    m_Count:20
+                    m_Col: 5,
+                    m_Row: 4,
+                    m_Loop: false,
+                    m_Time: 0.3,
+                    m_Count: 20
                 },
                 m_Gold: {
                     m_Texture: "res/texture/effect/jinbi02_256.png",
                     m_Width: 4,
                     m_Height: 4,
-                    m_Col:4,
-                    m_Row:2,
-                    m_Loop:false,
-                    m_Time:0.2,
-                    m_Count:8
+                    m_Col: 4,
+                    m_Row: 2,
+                    m_Loop: false,
+                    m_Time: 0.2,
+                    m_Count: 8
                 },
                 m_CarCrash: {
                     m_Texture: "res/texture/effect/pengzhuang02_256.png",
                     m_Width: 4,
                     m_Height: 4,
-                    m_Col:4,
-                    m_Row:2,
-                    m_Loop:false,
-                    m_Time:0.3,
-                    m_Count:8
+                    m_Col: 4,
+                    m_Row: 2,
+                    m_Loop: false,
+                    m_Time: 0.3,
+                    m_Count: 8
                 },
                 m_WeiQi: {
                     m_Texture: "res/texture/effect/weiqi_256_h.png",
@@ -636,9 +638,12 @@
             //难度提升km/s
             speedUp: 2,
             //ai侦测距离
-            aiY: 30,
+            aiY: 40,
             //ai 时间
             ai_time: 10,
+            // ai进行时间
+            ai_show_time: 0,
+            ai_id: 0,
             //闪避时间
             dodgeTime: 400,
 
@@ -651,7 +656,11 @@
             //是否进入模式
             show: false,
             //最大能量值
-            max: 100
+            max: 100,
+            // 进行时间
+            show_time: 0,
+            //概率
+            p:1
         }
 
         //加速
@@ -660,6 +669,9 @@
             time: 10,
             //是否进入模式
             show: false,
+            // 进行时间
+            show_time: 0,
+            acce_id: 0
         }
 
         //概率
@@ -688,7 +700,7 @@
             count: 5
         }
 
-        var renderer, scene, camera,audiolistener;
+        var renderer, scene, camera, audiolistener;
         var HEIGHT, WIDTH;
 
 
@@ -703,7 +715,7 @@
         var acce_id = 0;
         var gaming = false;
         var long_move = false;
-        var dom_ready = false; 
+        var dom_ready = false;
         var wx_ready = false;
         var res_ready = false;
 
@@ -737,7 +749,7 @@
             //camera.rotation.set(-Math.PI * 0.1, 0, 0);
             //camera.position.set(0,5,8);
             audiolistener = new THREE.AudioListener();
-            camera.add( audiolistener );
+            camera.add(audiolistener);
             scene = new THREE.Scene();
             //scene.background = new THREE.Color( 0x050505 );
             renderer = new THREE.WebGLRenderer({
@@ -867,28 +879,28 @@
             }
 
         }
-        function setAutoDiverEnable(car,enable){
+        function setAutoDiverEnable(car, enable) {
             if (!car.m_AutoDiver) {
-                var res=GameResConfig.m_Effect.m_AutoDiver;
-                var crash=createSprite(res.m_Width,res.m_Height,res.m_Texture);
+                var res = GameResConfig.m_Effect.m_AutoDiver;
+                var crash = createSprite(res.m_Width, res.m_Height, res.m_Texture);
                 car.add(crash);
                 car.m_AutoDiver = crash;
-                crash.position.set(0,2,-GameResConfig.m_Car.m_Height*0.5);
+                crash.position.set(0, 2, -GameResConfig.m_Car.m_Height * 0.5);
             }
-            car.m_AutoDiver.visible=enable;
+            car.m_AutoDiver.visible = enable;
         }
         function setCarOilEffectEnable(car, enable) {
             if (!car.m_OilEffect) {
-                var res=GameResConfig.m_Effect.m_Oil;
-                var crash=createSpriteAnimation(res);
+                var res = GameResConfig.m_Effect.m_Oil;
+                var crash = createSpriteAnimation(res);
                 car.add(crash);
                 car.m_OilEffect = crash;
-                crash.position.set(0,1.5,-GameResConfig.m_Car.m_Height*0.5);
+                crash.position.set(0, 1.5, -GameResConfig.m_Car.m_Height * 0.5);
             }
-            if(enable){
-                car.m_OilEffect.visible=true;
-                car.m_OilEffect.animation.m_RunTime=0;
-                car.m_OilEffect.animation.m_FrameIndex=1;
+            if (enable) {
+                car.m_OilEffect.visible = true;
+                car.m_OilEffect.animation.m_RunTime = 0;
+                car.m_OilEffect.animation.m_FrameIndex = 1;
             }
 
         }
@@ -1029,7 +1041,7 @@
             });
             var model = new THREE.Mesh(geometry, shaderMaterial);
             mesh.add(model);
-            model.position.set(0, GameResConfig[ps].m_Height*0.5, 0);
+            model.position.set(0, GameResConfig[ps].m_Height * 0.5, 0);
             return mesh;
         }
 
@@ -1060,19 +1072,19 @@
             //offset.value = new THREE.Vector4(1,1,0,0);
             // offset.value = new THREE.Vector4(offset.value.x,offset.value.y,offset_x,offset_y);
             // console.log(offset);
-            offset.value.z=offset_x;
-            offset.value.w=offset_y;
+            offset.value.z = offset_x;
+            offset.value.w = offset_y;
         }
-        function createSpriteAnimationMaterial(res,col,row,count,time,loop){
-            var animation={};
-            animation.m_FrameCount=count;
-            animation.m_Col=col;
-            animation.m_Row=row;
-            animation.m_Time=time;
-            animation.m_Loop=loop;
-            animation.m_RunTime=0;
-            animation.m_FrameLength=time/count;
-            animation.m_FrameIndex=0;
+        function createSpriteAnimationMaterial(res, col, row, count, time, loop) {
+            var animation = {};
+            animation.m_FrameCount = count;
+            animation.m_Col = col;
+            animation.m_Row = row;
+            animation.m_Time = time;
+            animation.m_Loop = loop;
+            animation.m_RunTime = 0;
+            animation.m_FrameLength = time / count;
+            animation.m_FrameIndex = 0;
             var shaderMaterial = new THREE.ShaderMaterial({
                 uniforms: {
                     offsetUV: { value: new THREE.Vector4(1.0 / col, -1.0 / row, 0, 0) },
@@ -1127,7 +1139,7 @@
                 }
             }
         }
-        function createPlayerCar(){
+        function createPlayerCar() {
             player_car = createCar(GameResConfig.m_Car.m_Texture, true);
             player_car.PositionType = PositionType.Center;
             scene.add(player_car);
@@ -1139,7 +1151,7 @@
                 engine_high_audio.setVolume(0);
                 engine_high_audio.play();
             });
-            LoadAudio(GameResConfig.m_Audio.m_EngineLow,(buffer)=>{
+            LoadAudio(GameResConfig.m_Audio.m_EngineLow, (buffer) => {
                 engine_low_audio.setBuffer(buffer);
                 engine_low_audio.setLoop(true);
                 engine_high_audio.setVolume(0);
@@ -1209,7 +1221,10 @@
         Math.lerp = function (a, b, t) {
             return a + (b - a) * t;
         }
-        function updatePlayerCarEngineAudio(frame,speed){
+        function updatePlayerCarEngineAudio(frame, speed) {
+            if(money_rain.show){
+                return;
+            }
             var vol=Math.lerp(0,1,speed/GameConfig.m_CarMaxSpeed);
             if(vol == 0){
                 engine_high_audio.setVolume(0);
@@ -1224,6 +1239,17 @@
             engine_high_audio.setVolume((vol-vol2)*vol_len);
             engine_low_audio.setVolume(vol2*vol_len);
         }
+
+        function enginePalyPause(play){
+            if(play){
+                engine_high_audio.play();
+                engine_low_audio.play();
+            }else{
+                engine_high_audio.stop();
+                engine_low_audio.stop();
+            }
+        }
+
         function updateSpriteAnimation(frame) {
             for (var i = 0; i < sprite_animation_list.length; i++) {
                 var sprite = sprite_animation_list[i];
@@ -1417,13 +1443,19 @@
                     ai_drive = true;
 
                     show_ai();
-                    setAutoDiverEnable(player_car,true);
-                    window.clearTimeout(ai_id);
-                    ai_id = setTimeout(() => {
-                        setAutoDiverEnable(player_car,false);
-                        hidden_ai();
-                        ai_drive = false;
-                    }, PlayScoreCofing.ai_time * 1000);
+                    setAutoDiverEnable(player_car, true);
+                    window.clearTimeout(PlayScoreCofing.ai_id);
+                    PlayScoreCofing.ai_show_time = 0;
+                    // ai_id = setTimeout(() => {
+                    //     setAutoDiverEnable(player_car, false);
+                    //     hidden_ai();
+                    //     ai_drive = false;
+                    // }, PlayScoreCofing.ai_time * 1000);
+                    // time_out(PlayScoreCofing.ai_id, PlayScoreCofing.ai_show_time, PlayScoreCofing.ai_time, () => {
+                    //     setAutoDiverEnable(player_car, false);
+                    //     hidden_ai();
+                    //     ai_drive = false;
+                    // })
                     pushCachedObject(item);
                     return true;
                 } else if (item.m_Type == ItemType.Accelerate) {
@@ -1431,17 +1463,32 @@
                     Accelerate.show = true;
                     forword_speed = GameConfig.m_CarMaxSpeedAc;
 
-                    window.clearTimeout(acce_id);
+                    window.clearTimeout(Accelerate.acce_id);
+                    Accelerate.show_time = 0;
                     acce_id = setTimeout(() => {
                         Accelerate.show = false;
-                        forword_speed = GameConfig.m_CarMaxSpeed;
 
                     }, Accelerate.time * 1000);
+
                     pushCachedObject(item);
                     return true;
                 }
             }
             return false;
+        }
+
+        function time_out(id, time, end, cb) {
+            id = setTimeout(() => {
+                if (gaming) {
+                    time += 1;
+                }
+                if (time < end) {
+                    time_out(id, time, end, cb);
+                } else {
+                    time = 0;
+                    cb();
+                }
+            }, 1000)
         }
 
         function clock_item(index) {
@@ -1482,16 +1529,27 @@
                     var s = (GameConfig.m_CarMaxSpeed * GameConfig.m_CarMaxSpeed - forword_speed * forword_speed) * 0.5 / GameConfig.m_CarAcceleration;
                     player_car.position.z = GameConfig.m_CarPosition[2] + s * 0.02;
                 }
-                else {
-                    //play_engine('audio_run_a');
-                    player_car.position.z = GameConfig.m_CarPosition[2];
+                else if (forword_speed > GameConfig.m_CarMaxSpeed) {
                     if (!Accelerate.show) {
-                        forword_speed = GameConfig.m_CarMaxSpeed;
+                        if (move_forword) forword_speed -= GameConfig.m_CarAcceleration * frame;
+                        else if (forword_speed > 0) forword_speed += GameConfig.m_CarAcceleration * frame;
+                        var s = (GameConfig.m_CarMaxSpeedAc * GameConfig.m_CarMaxSpeedAc - forword_speed * forword_speed) * 0.5 / GameConfig.m_CarAcceleration;
+                        player_car.position.z = GameConfig.m_CarPosition[2] - s * 0.02;
                     }
 
+                } else {
+                    player_car.position.z = GameConfig.m_CarPosition[2];
+                    forword_speed = GameConfig.m_CarMaxSpeed;
                 }
+                if (!Accelerate.show && forword_speed > GameConfig.m_CarMaxSpeed) {
+                    if (move_forword) forword_speed -= GameConfig.m_CarAcceleration * frame;
+                    else if (forword_speed > 0) forword_speed += GameConfig.m_CarAcceleration * frame;
+                    var s = (GameConfig.m_CarMaxSpeedAc * GameConfig.m_CarMaxSpeedAc - forword_speed * forword_speed) * 0.5 / GameConfig.m_CarAcceleration;
+                    player_car.position.z = GameConfig.m_CarPosition[2] - s * 0.02;
+                }
+
                 setCarWeiQiEnable(player_car, move_forword);
-                updatePlayerCarEngineAudio(frame,forword_speed);
+                updatePlayerCarEngineAudio(frame, forword_speed);
             }
             if (forword_speed_offset != 0) {
                 forword_speed_offset = Math.lerp(forword_speed_offset, 0, frame);
@@ -1516,20 +1574,20 @@
                 var speed = self_seepd - player_speed;
                 item.position.z -= frame * speed;
                 //console.log('car',frame * speed);
-                if (Accelerate.show) {
+                // if (Accelerate.show) {
 
-                    setCarShaBaoEnable(item, item.m_Crash);
-                    if (item.m_Crash) {
-                        if (item.m_SpeedOffset > 0) {
-                            item.m_SpeedOffset = Math.lerp(item.m_SpeedOffset, 0, 0.2);
-                        }
-                        if (item.m_SpeedOffset == 0) {
-                            pushCachedObject(item);
-                            item.m_Crash = false;
-                        }
-                        continue;
-                    }
-                }
+                //     setCarShaBaoEnable(item, item.m_Crash);
+                //     if (item.m_Crash) {
+                //         if (item.m_SpeedOffset > 0) {
+                //             item.m_SpeedOffset = Math.lerp(item.m_SpeedOffset, 0, 0.2);
+                //         }
+                //         if (item.m_SpeedOffset == 0) {
+                //             pushCachedObject(item);
+                //             item.m_Crash = false;
+                //         }
+                //         continue;
+                //     }
+                // }
                 // if (item.x != item.position.x) {
                 //     item.position.x += GameConfig.m_CarHorizontalSpeed * frame * item.direction;
                 //     if (item.direction > 0 && item.position.x > item.x) {
@@ -1542,7 +1600,7 @@
 
                 if (!move_ai && Math.abs(player_car.position.x - item.position.x) < GameResConfig.m_Car.m_Width && Math.abs(item.position.z - player_car.position.z) < (PlayScoreCofing.aiY * frame * Math.abs(speed))) {
                     if (ai_drive) {
-
+                        //console.log('move_ai');
                         move_ai = true;
                         var car_ran_pst = 1;
                         if (player_car.position.x > 1) {
@@ -1565,6 +1623,7 @@
                         player_car.PositionType += car_ran_pst;
                         player_car.PositionType += 30;
                         player_car.PositionType %= 3;
+                        ai_x = (player_car.PositionType - 1) * (GameConfig.m_RoadWidth / 3);
                     }
                     will_carsh();
 
@@ -1574,7 +1633,7 @@
                     pushCachedObject(item);
                     temp_car_list.splice(i, 1);
                     //item.position.z += GameConfig.m_RoadLength;
-                    console.log('zzzzzz');
+                    //console.log('zzzzzz');
                 }
                 else if (item.position.z > 0) {
                     //console.log('push');
@@ -1609,14 +1668,15 @@
                         // item.x_start = x;
                         // item.direction = po;
                         // item.x = x + GameConfig.m_RoadWidth / 3 * po;
-                        if (!Accelerate.show) {
-                            play_audio('audio_collide');
-                            palyer_score.carsh = true;
-                            //console.log(new Date(),'carsh',palyer_score.carsh);
-                            forword_speed -= GameConfig.m_CarCrashSpeedOffset;
-                            forword_speed = Math.max(forword_speed, 0);
-                            this.update_oil(-PlayScoreCofing.collideOil);
+                        if (Accelerate.show) {
+                            Accelerate.show = false;
                         }
+                        play_audio('audio_collide');
+                        palyer_score.carsh = true;
+                        //console.log(new Date(),'carsh',palyer_score.carsh);
+                        forword_speed -= GameConfig.m_CarCrashSpeedOffset;
+                        forword_speed = Math.max(forword_speed, 0);
+                        this.update_oil(-PlayScoreCofing.collideOil);
                         ///////////////////////////////////////////////////
                         //crash effect
                         // var cache_data = {
@@ -1892,27 +1952,27 @@
             var GCW = GameConfig.m_RoadWidth / 3;
             if (move_left) {
                 pst = -1;
-                if (move_ai && player_car.position.x < car_t * GCW) {
-                    player_car.position.x = car_t * GCW;
-                    console.log('left false', car_t, player_car.position.x, player_car.PositionType);
+                if (move_ai && player_car.position.x <= car_t * GCW) {
+                    //player_car.position.x = car_t * GCW;
+                    //console.log('left false', car_t, player_car.position.x, player_car.PositionType);
                     move_ai = false;
                     move_left = false;
+                } else {
+                    //console.log(move_ai,player_car.position.x,car_t,ai_x);
                 }
             }
             if (move_right) {
                 pst = 1;
                 //console.log(car_t);
-                if (move_ai && player_car.position.x > car_t * GCW) {
-                    console.log('right false', car_t, player_car.position.x, player_car.PositionType);
-                    player_car.position.x = car_t * GCW;
+                if (move_ai && player_car.position.x >= car_t * GCW) {
+                    //console.log('right false', car_t, player_car.position.x, player_car.PositionType);
+                    //player_car.position.x = car_t * GCW;
                     move_ai = false;
                     move_right = false;
                 }
             }
 
-            if (player_car.position.x == car_t * GCW) {
-                //move_ai = false;
-            }
+
 
             if (long_move) {
                 player_car.position.x += GameConfig.m_CarHorizontalSpeed * frame * pst;
@@ -1956,7 +2016,7 @@
                         //console.log('dodge');
                         palyer_score.dodgeCount++;
                         this.add_score(PlayScoreCofing.dodge);
-
+                        //set_combo(palyer_score.dodgeCount);
                     } else {
                         palyer_score.carsh = false;
                         //console.log('no dodge');
@@ -2011,7 +2071,10 @@
             //
             setTimeout(() => {
                 //console.log(palyer_score.enery);
-                palyer_score.enery -= 1;
+                if (gaming) {
+
+                    palyer_score.enery -= 1;
+                }
                 if (palyer_score.enery < 0) {
                     palyer_score.enery = 0;
 
@@ -2022,7 +2085,7 @@
                     }, 0);
                 } else {
                     this.set_palyer_score('enery_num', palyer_score.enery);
-                    play_audio('audio_pour');
+                    //play_audio('audio_pour');
                     show_money_rain();
                 }
                 //console.log(palyer_score.enery,money_rain.show);
@@ -2084,10 +2147,9 @@
             this.set_palyer_score('oil_num', Math.ceil(palyer_score.oil) + ' / 100');
             update_oil_img(palyer_score.oil);
         }
-        ResourcePreLoad(GameResConfig,function(progress){
-            console.log("resource loaded:"+progress);
-            if(progress === 1)
-            {
+        ResourcePreLoad(GameResConfig, function (progress) {
+            console.log("resource loaded:" + progress);
+            if (progress === 1) {
                 init();
                 RigisterEvent();
                 loop(0);
@@ -2106,9 +2168,9 @@
             console.log('dom _check');
             check_ready();
         }
-        
+
         function check_ready() {
-            if(dom_ready && wx_ready && res_ready){
+            if (dom_ready && wx_ready && res_ready) {
                 gaming = true;
             }
         }

@@ -20,6 +20,27 @@ p{
     padding: 0;
 }
 
+.combo{
+    position: absolute;
+    width: 3.75rem;
+    height: 0.8889rem;
+    top: 2.9259rem;
+    right: 0;
+    background-image: url(res/texture/gaming/combo_num.png);
+    background-size: 100% 100%;
+    background-repeat: no-repeat;
+}
+
+.combo_count{
+    color: #fff;
+    font-size: 0.6111rem;
+    line-height: 0.6111rem;
+    text-align: right;
+    margin-right: 0.3148rem;
+    transform: skewX(-20deg);
+    -webkit-transform: skewX(-20deg);
+}
+
 .mask{
     position: fixed;
     width: 100%;
