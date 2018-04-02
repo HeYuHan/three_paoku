@@ -1,4 +1,5 @@
 var touchstart = "touchstart" in window ? "touchstart" : "click";
+var combo_id = 0, ai_show_id = 0;
 function set_pause() {
     var pause_over = get_node('pause_over');
     var pause_again = get_node('pause_again');
@@ -11,6 +12,7 @@ function set_pause() {
         play_audio('audio_ok');
         hidden_node('pause');
         play_loop();
+        enginePalyPause(true);
         gaming = true;
     })
 }
@@ -81,6 +83,7 @@ function show_ai() {
     var left = get_node('ai_left');
     var right = get_node('ai_right');
     var time = get_node('ai_time');
+    window.clearTimeout(ai_show_id);
     time.innerHTML = PlayScoreCofing.ai_time;
     update_ai_time();
     hidden_node('left_btn');
@@ -95,16 +98,19 @@ function show_ai() {
 
 function update_ai_time() {
     var time = get_node('ai_time');
-    setTimeout(() => {
-        var time_s = time.innerHTML - 1;
+    ai_show_id = setTimeout(() => {
+        var time_s = time.innerHTML;
+        if (gaming) {
+            time_s -= 1;
+        }
         if (time_s > 0) {
             time.innerHTML = time_s;
             update_ai_time();
         } else {
             time.innerHTML = 0;
             //console.log('hidden',time_s);
-//             hidden_ai();
-//             ai_drive = false;
+            hidden_ai();
+            //ai_drive = false;
         }
     }, 1000)
 }
@@ -115,6 +121,9 @@ function hidden_ai() {
     ai.className = 'ai hidden';
     show_node('left_btn');
     show_node('right_btn');
+    setAutoDiverEnable(player_car, false);
+
+    ai_drive = false;
 }
 
 function play_audio_main() {
@@ -211,4 +220,15 @@ function pause_audio(naem) {
 function replace_node(old, now, name) {
     var node = get_node(name);
     node.className = node.className.replace(old, now);
+}
+
+
+function set_combo(v) {
+    show_node('combo');
+    window.clearTimeout(combo_id);
+    var count = get_node('combo_count');
+    count.innerHTML = v;
+    combo_id = setTimeout(() => {
+        hidden_node('combo');
+    }, 6000);
 }

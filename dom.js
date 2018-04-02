@@ -16,7 +16,7 @@ function hidden_node(name){
     var cn = node.className;
     if(cn.match('show')){
         cn = cn.replace('show',' hidden');
-    }else{
+    }else if(!cn.match('hidden')){
         cn += ' hidden';
     }
     node.className = cn;
