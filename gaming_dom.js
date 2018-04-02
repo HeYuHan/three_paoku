@@ -85,12 +85,12 @@ function show_ai() {
     update_ai_time();
     hidden_node('left_btn');
     hidden_node('right_btn');
-    //show_node('ai');
-    // ai.className = 'ai';
-    // if (!left.className.match('run_left_ani')) {
-    //     left.className += ' run_left_ani';
-    //     right.className += ' run_right_ani';
-    // }
+    show_node('ai');
+    ai.className = 'ai';
+    if (!left.className.match('run_left_ani')) {
+        left.className += ' run_left_ani';
+        right.className += ' run_right_ani';
+    }
 }
 
 function update_ai_time() {
@@ -103,8 +103,8 @@ function update_ai_time() {
         } else {
             time.innerHTML = 0;
             //console.log('hidden',time_s);
-            hidden_ai();
-            ai_drive = false;
+//             hidden_ai();
+//             ai_drive = false;
         }
     }, 1000)
 }
