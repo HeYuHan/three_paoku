@@ -255,10 +255,10 @@
             for(var i=0;i<res_list.length;i++){
                 var res=res_list[i];
                 if(res.m_Type == 1){
-                    LoadTexture(res.m_Path,()=>{load_count++;if(load_count == res_list.length){callback()}});
+                    LoadTexture(res.m_Path,()=>{load_count++;{callback(load_count/res_list.length)}});
                 }
                 else if(res.m_Type == 2){
-                    LoadModel(res.m_Path,()=>{load_count++;if(load_count == res_list.length){callback()}});
+                    LoadModel(res.m_Path,()=>{load_count++;{callback(load_count/res_list.length)}});
                 }
             }
 
@@ -2051,16 +2051,20 @@
             this.set_palyer_score('oil_num', Math.ceil(palyer_score.oil) + ' / 100');
             update_oil_img(palyer_score.oil);
         }
-        ResourcePreLoad(GameResConfig,function(){
-            console.log("resource loaded");
-            init();
-            RigisterEvent();
-            loop(0);
-            createBackground();
-            createRoad();
-            createEnemyCar();
-            createPlayerCar();
-            play_audio_main();
+        ResourcePreLoad(GameResConfig,function(progress){
+            console.log("resource loaded:"+progress);
+            if(progress === 1)
+            {
+                init();
+                RigisterEvent();
+                loop(0);
+                createBackground();
+                createRoad();
+                createEnemyCar();
+                createPlayerCar();
+                play_audio_main();
+            }
+
         })
         
         window.onload = function () {
