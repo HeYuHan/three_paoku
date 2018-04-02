@@ -1183,13 +1183,18 @@
         }
         function updatePlayerCarEngineAudio(frame,speed){
             var vol=Math.lerp(0,1,speed/GameConfig.m_CarMaxSpeed);
+            if(vol == 0){
+                engine_high_audio.setVolume(0);
+                engine_low_audio.setVolume(0);
+                return;
+            }
             var vol_len=10;
             var pitch_time=3;
             engien_switch_pitch+=frame;
             if(engien_switch_pitch>pitch_time)engien_switch_pitch=0;
-            var vol2=1-Math.lerp(0,vol,engien_switch_pitch/pitch_time);
-            engine_high_audio.setVolume(Math.max(0.4,1-vol2)*vol_len);
-            engine_low_audio.setVolume(Math.min(vol2,0.8)*vol_len);
+            var vol2=Math.lerp(0,vol,engien_switch_pitch/pitch_time);
+            engine_high_audio.setVolume((vol-vol2)*vol_len);
+            engine_low_audio.setVolume(vol2*vol_len);
         }
         function updateSpriteAnimation(frame) {
             for (var i = 0; i < sprite_animation_list.length; i++) {
