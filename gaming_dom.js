@@ -139,9 +139,6 @@ function play_audio_auto(main, audios) {
             wx_ready = true;
             check_ready();
             main.play();
-            audios[0].play();
-            audios[1].play();
-            audios[1].pause();
         }, false);
     } else {
         document.addEventListener("WeixinJSBridgeReady", function () {
@@ -149,9 +146,6 @@ function play_audio_auto(main, audios) {
                 wx_ready = true;
                 check_ready();
                 main.play();
-                audios[0].play();
-                audios[1].play();
-                audios[1].pause();
             });
         }, false);
     }
@@ -160,6 +154,7 @@ function play_audio_auto(main, audios) {
         wx_ready = true;
         console.log('wx _check');
         check_ready();
+        main.play();
     }
 
     // check_ready();

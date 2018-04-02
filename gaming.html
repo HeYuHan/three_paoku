@@ -646,7 +646,9 @@
             //最大能量值
             max: 100,
             // 进行时间
-            show_time: 0
+            show_time: 0,
+            //概率
+            p:1
         }
 
         //加速
@@ -1396,6 +1398,7 @@
                     clock_item(item.m_Type);
                 }
                 if (item.m_Type == ItemType.Gold) {
+  
                     play_audio('audio_coin');
                     item.visible = false;
                     this.add_coin(item.rain);
