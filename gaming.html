@@ -54,9 +54,9 @@
         <audio src="res/audio/mu-ui_theme.wav" class="audio_b" loop preload></audio>
         <!-- <audio src="res/audio/ch-he_car_motion-engine_lo.wav" class="audio_run_n" loop preload></audio>
         <audio src="res/audio/ch-he_car_motion-engine_hi.wav" class="audio_run_a" loop preload></audio> -->
-        <audio src="res/audio/sc-ev_coin.wav" class="audio_coin" preload></audio>
+        <!-- <audio src="res/audio/sc-ev_coin.wav" class="audio_coin" preload></audio> -->
         <audio src="res/audio/sc-ev_turbo.wav" class="audio_turbo" preload></audio>
-        <audio src="res/audio/sc-ev_refuel.wav" class="audio_oil" preload></audio>
+        <!-- <audio src="res/audio/sc-ev_refuel.wav" class="audio_oil" preload></audio> -->
         <audio src="res/audio/sc-ev_collide.wav" class="audio_collide" preload></audio>
         <audio src="res/audio/sc-ev_nofuel.wav" class="audio_nofuel" preload></audio>
         <audio src="res/audio/sc-ev_pour.wav" class="audio_pour" preload></audio>
@@ -304,7 +304,8 @@
             m_Audio:{
                 m_EngineHigh:"res/audio/ch-he_car_motion-engine_hi.wav",
                 m_EngineLow:"res/audio/ch-he_car_motion-engine_lo.wav",
-                m_Gold:"res/audio/sc-ev_coin.ogg"
+                m_Gold:"res/audio/sc-ev_coin.ogg",
+                m_Oil:"res/audio/sc-ev_refuel.wav"
             },
             m_Background: {
                 m_Texture: "res/texture/yuanjing_bg.jpg",
@@ -1364,81 +1365,58 @@
             }
             //update static item
             var temp_static_item = [];
-            //console.log(static_item_list.length, 'len');
+            var soud_effect=0;
             for (var i = 0; i < static_item_list.length; i++) {
                 var item = static_item_list[i];
-                //console.log(item); && item.leng
                 item.position.z += frame * getCarSpeed();
                 if (chekcRunEnd(item)) {
                     pushCachedObject(item);
                 }
-                else if(!eat_coin(item)){
-                    temp_static_item.push(item);
+                else{
+                    var eat_ret= eat_coin(item);
+                    soud_effect |= eat_ret.effect;
+                    if(!eat_ret.any){
+                        temp_static_item.push(item);
+                    }
+                    else{
+                        pushCachedObject(item);
+                    }
                 }
-                // else {
-
-
-                //     //console.log(item,item.position.z);
-                //     item.position.z += frame * getCarSpeed();
-                //     if (chekcRunEnd(item)) {
-                //         //console.log('end',item.position.x);
-                //         pushCachedObject(item);
-
-                //     }
-                //     else {
-                //         temp_static_item.push(item);
-                //     }
-
-                // }
+                
             }
             static_item_list = temp_static_item;
-
-            //effect
-            // var temp_paritcle_list = [];
-            // for (var i = 0; i < particle_list.length; i++) {
-            //     var p = particle_list[i];
-            //     p.position.z += frame * getCarSpeed();
-            //     if (chekcRunEnd(p)) {
-            //         //console.log('end',item.position.x);
-            //         pushCachedObject(p);
-
-            //     }
-            //     else {
-            //         temp_static_item.push(p);
-            //         p.material.uniforms.Alpha = Math.lerp(1, 0, (-p.position.z / GameConfig.m_CameraPosition[2]));
-            //     }
-            // }
-            // particle_list = temp_paritcle_list;
+            if(soud_effect & (1<<1))palyEffectAudio(GameResConfig.m_Audio.m_Gold);
+            if(soud_effect & (1<<2))palyEffectAudio(GameResConfig.m_Audio.m_Oil);
 
         }
 
         function eat_coin(item) {
             //吃金币
+            var eat_ret={any:false,effect:0};
             if ((player_car.position.z > item.position.z)
                 && Math.abs(player_car.position.x - item.position.x) < GameResConfig.m_Car.m_Width
                 && Math.abs(player_car.position.z - item.position.z) < GameResConfig.m_Car.m_Height) {
-                console.log('eat');
 
 
                 if (window.clock[item.m_Type]) {
-                    return;
+                    return eat_ret;
                 } else {
                     clock_item(item.m_Type);
                 }
                 if (item.m_Type == ItemType.Gold) {
-                    palyEffectAudio(GameResConfig.m_Audio.m_Gold);
+                    
                     //play_audio('audio_coin');
                     item.visible = false;
                     this.add_coin(item.rain);
-                    pushCachedObject(item);
                     setCarGoldffectEnable(player_car, true);
-                    return true;
+                    eat_ret.any=true;
+                    eat_ret.effect |= 1<<1;
                 } else if (item.m_Type == ItemType.Oil) {
-                    play_audio('audio_oil');
-                    pushCachedObject(item);
+                    //play_audio('audio_oil');
                     this.add_oil(PlayScoreCofing.oil_add);
                     setCarOilEffectEnable(player_car, true);
-                    return true;
+                    eat_ret.any=true;
+                    eat_ret.effect |= 1<<2;
                 } else if (item.m_Type == ItemType.Ai) {
                     ai_drive = true;
 
@@ -1446,18 +1424,8 @@
                     setAutoDiverEnable(player_car, true);
                     window.clearTimeout(PlayScoreCofing.ai_id);
                     PlayScoreCofing.ai_show_time = 0;
-                    // ai_id = setTimeout(() => {
-                    //     setAutoDiverEnable(player_car, false);
-                    //     hidden_ai();
-                    //     ai_drive = false;
-                    // }, PlayScoreCofing.ai_time * 1000);
-                    // time_out(PlayScoreCofing.ai_id, PlayScoreCofing.ai_show_time, PlayScoreCofing.ai_time, () => {
-                    //     setAutoDiverEnable(player_car, false);
-                    //     hidden_ai();
-                    //     ai_drive = false;
-                    // })
-                    pushCachedObject(item);
-                    return true;
+                    eat_ret.any=true;
+                    eat_ret.effect |= 1<<3;
                 } else if (item.m_Type == ItemType.Accelerate) {
                     play_audio('audio_turbo');
                     Accelerate.show = true;
@@ -1470,11 +1438,12 @@
 
                     }, Accelerate.time * 1000);
 
-                    pushCachedObject(item);
-                    return true;
+                    
+                    eat_ret.any=true;
+                    eat_ret.effect |= 1<<4;
                 }
             }
-            return false;
+            return eat_ret;
         }
 
         function time_out(id, time, end, cb) {
