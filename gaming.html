@@ -1614,6 +1614,7 @@
                 if (item.position.z < -GameConfig.m_RoadLength) {
                     pushCachedObject(item);
                     temp_car_list.splice(i, 1);
+                    i--;
                     item.position.z += GameConfig.m_RoadLength;
                     //console.log('zzzzzz');
                 }
@@ -1621,6 +1622,7 @@
                     //console.log('push');
                     pushCachedObject(item);
                     temp_car_list.splice(i, 1);
+                    i--;
                     //item.position.z -= GameConfig.m_RoadLength;
                     //item.PositionType = Math.floor(Math.random()*3);
                     //item.position.x = item.x = GameConfig.m_RoadWidth / 3 * (item.PositionType - 1);
