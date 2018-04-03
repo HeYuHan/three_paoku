@@ -1504,7 +1504,7 @@
                 else if (forword_speed > GameConfig.m_CarMaxSpeed) {
                     if (!Accelerate.show) {
                         if (move_forword) forword_speed -= GameConfig.m_CarAcceleration * frame;
-                        else if (forword_speed > 0) //forword_speed += GameConfig.m_CarAcceleration * frame;
+                        //else if (forword_speed > 0) //forword_speed += GameConfig.m_CarAcceleration * frame;
                         var s = (forword_speed * forword_speed - GameConfig.m_CarMaxSpeedAc * GameConfig.m_CarMaxSpeedAc) * 0.5 / GameConfig.m_CarAcceleration;
                         player_car.position.z = GameConfig.m_CarPosition[2] - s * 0.02;
                     }
