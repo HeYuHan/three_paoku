@@ -1223,9 +1223,9 @@
             return a + (b - a) * t;
         }
         function updatePlayerCarEngineAudio(frame, speed) {
-            if(money_rain.show){
-                return;
-            }
+            // if(money_rain.show){
+            //     return;
+            // }
             var vol=Math.lerp(0,1,speed/GameConfig.m_CarMaxSpeed);
             if(vol == 0){
                 engine_high_audio.setVolume(0);
@@ -1493,7 +1493,10 @@
                 this.carMove(frame);
                 if (forword_speed < GameConfig.m_CarMaxSpeed) {
                     //play_engine('audio_run_n');
-                    if (move_forword) forword_speed += GameConfig.m_CarAcceleration * frame;
+                    if (move_forword) {
+                        forword_speed += GameConfig.m_CarAcceleration * frame;
+                        forword_speed = Math.min(GameConfig.m_CarMaxSpeed,forword_speed);
+                    }
                     else if (forword_speed > 0) forword_speed -= GameConfig.m_CarAcceleration * frame;
                     var s = (GameConfig.m_CarMaxSpeed * GameConfig.m_CarMaxSpeed - forword_speed * forword_speed) * 0.5 / GameConfig.m_CarAcceleration;
                     player_car.position.z = GameConfig.m_CarPosition[2] + s * 0.02;
