@@ -4,12 +4,14 @@ function set_pause() {
     var pause_over = get_node('pause_over');
     var pause_again = get_node('pause_again');
     pause_over.addEventListener(touchstart, () => {
-        play_audio('audio_ok');
+        //play_audio('audio_ok');
+        palyEffectAudio(GameResConfig.m_Audio.m_OK);
         window.location.href = 'index.html';
     })
 
     pause_again.addEventListener(touchstart, () => {
-        play_audio('audio_ok');
+        //play_audio('audio_ok');
+        palyEffectAudio(GameResConfig.m_Audio.m_OK);
         hidden_node('pause');
         play_loop();
         enginePalyPause(true);
@@ -24,12 +26,14 @@ function set_over() {
 
 
     over_over.addEventListener(touchstart, () => {
-        play_audio('audio_ok');
+        //play_audio('audio_ok');
+        palyEffectAudio(GameResConfig.m_Audio.m_OK);
         window.location.href = 'index.html';
     })
 
     over_again.addEventListener(touchstart, () => {
-        play_audio('audio_ok');
+        //play_audio('audio_ok');
+        palyEffectAudio(GameResConfig.m_Audio.m_OK);
         window.location.href = 'gaming.html';
     })
 
@@ -46,7 +50,8 @@ function set_gaunggao() {
     var guanggao = get_node('guanggao');
     var web_g = get_node('web_g');
     close.addEventListener(touchstart, () => {
-        play_audio('audio_ok');
+        //play_audio('audio_ok');
+        palyEffectAudio(GameResConfig.m_Audio.m_OK);
         hidden_node('gg');
         add_oil(PlayScoreCofing.oil);
         play_loop();
@@ -128,40 +133,28 @@ function hidden_ai() {
 
 function play_audio_main() {
     var main = get_node('audio_b');
-    var rn = get_node('audio_run_n');
-    var ra = get_node('audio_run_a');
-    play_audio_auto(main, [rn, ra]);
+    main.play();
 }
 
-function play_audio_auto(main, audios) {
+function play_audio_auto() {
     if (window.WeixinJSBridge) {
         WeixinJSBridge.invoke('getNetworkType', {}, function (e) {
             wx_ready = true;
             check_ready();
-            main.play();
         }, false);
     } else {
         document.addEventListener("WeixinJSBridgeReady", function () {
             WeixinJSBridge.invoke('getNetworkType', {}, function (e) {
                 wx_ready = true;
                 check_ready();
-                main.play();
             });
         }, false);
     }
     var ua = navigator.userAgent.toLowerCase();
     if (!ua.match(/MicroMessenger/i)) {
         wx_ready = true;
-        console.log('wx _check');
         check_ready();
-        main.play();
     }
-
-    // check_ready();
-    // main.play();
-    // audios[0].play();
-    // audios[1].play();
-    // audios[1].pause();
     return false;
 }
 
@@ -188,11 +181,7 @@ function play_engine(hi) {
 
 function pause_loop() {
     var main = get_node('audio_b');
-    //var rn = get_node('audio_run_n');
-    //var ra = get_node('audio_run_a');
     main.pause();
-    //rn.pause();
-    //ra.pause();
 }
 
 function play_loop() {
