@@ -225,6 +225,8 @@
                         for (var i = 0; i < call.length; i++) {
                             call[i](buffer);
                         }
+                    },null,function(e){
+                        alert(e);
                     });
                 }
 
@@ -304,8 +306,8 @@
             m_Audio:{
                 m_EngineHigh:"res/audio/ch-he_car_motion-engine_hi.wav",
                 m_EngineLow:"res/audio/ch-he_car_motion-engine_lo.wav",
-                m_Gold:"res/audio/sc-ev_coin.ogg",
-                m_Oil:"res/audio/sc-ev_refuel.wav"
+                m_Gold:"res/audio/sc-ev_coin.mp3",
+                m_Oil:"res/audio/sc-ev_refuel.mp3"
             },
             m_Background: {
                 m_Texture: "res/texture/yuanjing_bg.jpg",
@@ -1164,8 +1166,12 @@
             var audio = effect_audio_list[src];
             if(audio){
                 audio.offset=0;
-                audio.pause();
-                audio.play();
+                try{
+                    audio.pause();
+                    audio.play();
+                }catch(e){
+                    console.log(e);
+                }
             }
             else {
                 audio = new THREE.Audio(audiolistener);
@@ -2113,7 +2119,6 @@
             update_oil_img(palyer_score.oil);
         }
         ResourcePreLoad(GameResConfig, function (progress) {
-            console.log("resource loaded:" + progress);
             if (progress === 1) {
                 init();
                 RigisterEvent();
@@ -2133,10 +2138,21 @@
             console.log('dom _check');
             check_ready();
         }
+        function activeAudio(audio){
+            try{
+                audio.play();
+                audio.pause();
+            }
+            catch(e){
 
+            }
+            
+        }
         function check_ready() {
             if (dom_ready && wx_ready && res_ready) {
                 gaming = true;
+                //activeAudio(engine_low_audio);
+                //activeAudio(engine_high_audio);
             }
         }
 
