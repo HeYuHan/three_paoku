@@ -888,7 +888,8 @@
             });
         }
         function createSprite(width, height, src) {
-            var sprite_mesh_data = new THREE.PlaneGeometry(width, height, 1, 1);
+            
+            //var sprite_mesh_data = new THREE.PlaneGeometry(width, height, 1, 1);
             // var shaderMaterial = new THREE.ShaderMaterial({
             //     uniforms: {
             //         Alpha: { value: 1 },
@@ -907,7 +908,7 @@
                 fragmentShader: document.getElementById('alphafragment').textContent,
                 transparent: true
             });
-            return new THREE.Mesh(sprite_mesh_data, shaderMaterial);
+            return getSharedPlaneMesh(width, height,shaderMaterial);
 
         }
         function setCarShaBaoEnable(car, enable) {
