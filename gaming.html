@@ -801,6 +801,28 @@
         }
         function createAD(res, isCenter) {
             if (!isCenter) {
+                if(!window.m_ModeADMat1){
+                    window.m_ModeADMat1= new THREE.ShaderMaterial({
+                    uniforms: {
+                        offsetUV: { value: new THREE.Vector4(1, 1, 0, 0) },
+                        ColorMap: { value: LoadTexture(res.m_Texture) }
+                    },
+                    vertexShader: document.getElementById('uvanivertex').textContent,
+                    fragmentShader: document.getElementById('costomfragment').textContent
+                });
+                     
+                }
+                if(!window.m_ModeADMat2){
+                    window.m_ModeADMat2= new THREE.ShaderMaterial({
+                    uniforms: {
+                        offsetUV: { value: new THREE.Vector4(1, 1, 0, 0.5) },
+                        ColorMap: { value: LoadTexture(res.m_Texture) }
+                    },
+                    vertexShader: document.getElementById('uvanivertex').textContent,
+                    fragmentShader: document.getElementById('costomfragment').textContent
+                });
+                     
+                }
                 // var shaderMaterial = new THREE.ShaderMaterial({
                 //     uniforms: {
                 //         offsetUV: { value: new THREE.Vector4(1, 1, 0, Math.floor(Math.random() * 2) / 2.0) },
@@ -809,15 +831,16 @@
                 //     vertexShader: document.getElementById('uvanivertex').textContent,
                 //     fragmentShader: document.getElementById('costomfragment').textContent
                 // });
-                var shaderMaterial = getCashShaderMaterials(res.m_Texture,{
-                    uniforms: {
-                        offsetUV: { value: new THREE.Vector4(1, 1, 0, Math.floor(Math.random() * 2) / 2.0) },
-                        ColorMap: { value: LoadTexture(res.m_Texture) }
-                    },
-                    vertexShader: document.getElementById('uvanivertex').textContent,
-                    fragmentShader: document.getElementById('costomfragment').textContent
-                });
-                var ad = createModel(res.m_Model, shaderMaterial);
+
+                // var shaderMaterial = getCashShaderMaterials(res.m_Texture,{
+                //     uniforms: {
+                //         offsetUV: { value: new THREE.Vector4(1, 1, 0, Math.floor(Math.random() * 2) / 2.0) },
+                //         ColorMap: { value: LoadTexture(res.m_Texture) }
+                //     },
+                //     vertexShader: document.getElementById('uvanivertex').textContent,
+                //     fragmentShader: document.getElementById('costomfragment').textContent
+                // });
+                var ad = createModel(res.m_Model, (Math.random()<0.5)?window.m_ModeADMat1:window.m_ModeADMat2);
 
                 return ad;
 
@@ -1010,7 +1033,7 @@
             var scale = isModel ? 1 : GameResConfig.m_Buildings.m_Scale;
             var width = scale * building.m_Width;
             var height = scale * building.m_Height;
-            var geometry = new THREE.PlaneGeometry(width, height, 1, 1);
+            //var geometry = new THREE.PlaneGeometry(width, height, 1, 1);
             // var shaderMaterial = new THREE.ShaderMaterial({
             //     uniforms: {
             //         ColorMap: { value: LoadTexture(building.m_Texture) }
@@ -1027,7 +1050,7 @@
                 fragmentShader: document.getElementById('costomfragment').textContent,
                 transparent: true
             });
-            var model = new THREE.Mesh(geometry, shaderMaterial);
+            var model = getSharedPlaneMesh(width,height,shaderMaterial);
             mesh.add(model);
             if (building.m_Position == PositionType.Left) {
                 model.position.set(building.m_PositionOffset[0] - width * 0.5, building.m_PositionOffset[1] + height * 0.5, building.m_PositionOffset[2]);
@@ -1045,7 +1068,7 @@
         }
         function createGold() {
             var mesh = new THREE.Object3D();
-            var geometry = new THREE.PlaneGeometry(GameResConfig.m_Gold.m_Size, GameResConfig.m_Gold.m_Size, 1, 1);
+            //var geometry = new THREE.PlaneGeometry(GameResConfig.m_Gold.m_Size, GameResConfig.m_Gold.m_Size, 1, 1);
             // var shaderMaterial = new THREE.ShaderMaterial({
             //     uniforms: {
             //         ColorMap: { value: LoadTexture(GameResConfig.m_Gold.m_Texture) }
@@ -1062,7 +1085,7 @@
                 fragmentShader: document.getElementById('costomfragment').textContent,
                 transparent: true
             });
-            var model = new THREE.Mesh(geometry, shaderMaterial);
+            var model = getSharedPlaneMesh(GameResConfig.m_Gold.m_Size,GameResConfig.m_Gold.m_Size,shaderMaterial);
             mesh.add(model);
             model.position.set(0, GameResConfig.m_Gold.m_Size * 0.5, 0);
             return mesh;
@@ -1070,7 +1093,7 @@
 
         function createOil() {
             var mesh = new THREE.Object3D();
-            var geometry = new THREE.PlaneGeometry(GameResConfig.m_Oil.m_Size, GameResConfig.m_Oil.m_Size, 1, 1);
+            //var geometry = new THREE.PlaneGeometry(GameResConfig.m_Oil.m_Size, GameResConfig.m_Oil.m_Size, 1, 1);
             // var shaderMaterial = new THREE.ShaderMaterial({
             //     uniforms: {
             //         ColorMap: { value: LoadTexture(GameResConfig.m_Oil.m_Texture) }
@@ -1087,7 +1110,7 @@
                 fragmentShader: document.getElementById('costomfragment').textContent,
                 transparent: true
             });
-            var model = new THREE.Mesh(geometry, shaderMaterial);
+            var model = getSharedPlaneMesh(GameResConfig.m_Oil.m_Size,GameResConfig.m_Oil.m_Size,shaderMaterial);
             mesh.add(model);
             model.position.set(0, GameResConfig.m_Oil.m_Size * 0.5, 0);
             return mesh;
@@ -1095,7 +1118,7 @@
 
         function createProps(ps) {
             var mesh = new THREE.Object3D();
-            var geometry = new THREE.PlaneGeometry(GameResConfig[ps].m_Size, GameResConfig[ps].m_Size, 1, 1);
+            //var geometry = new THREE.PlaneGeometry(GameResConfig[ps].m_Size, GameResConfig[ps].m_Size, 1, 1);
             // var shaderMaterial = new THREE.ShaderMaterial({
             //     uniforms: {
             //         ColorMap: { value: LoadTexture(GameResConfig[ps].m_Texture) }
@@ -1112,7 +1135,7 @@
                 fragmentShader: document.getElementById('costomfragment').textContent,
                 transparent: true
             })
-            var model = new THREE.Mesh(geometry, shaderMaterial);
+            var model = getSharedPlaneMesh(GameResConfig[ps].m_Size,GameResConfig[ps].m_Size,shaderMaterial);
             mesh.add(model);
             model.position.set(0, GameResConfig[ps].m_Height * 0.5, 0);
             return mesh;
@@ -1123,22 +1146,15 @@
             var sy = GameResConfig.m_Background.m_Height / HEIGHT;
             var w1 = screenToWorldPosition((-1 - sx) * 0.5, (-1 - sy) * 0.5, 1000);
             var w2 = screenToWorldPosition((1 + sx) * 0.5, (1 + sy) * 0.5, 1000);
-            var geometry = new THREE.PlaneGeometry(w2.x - w1.x, w2.y - w1.y, 1, 1);
-            // var shaderMaterial = new THREE.ShaderMaterial({
-            //     uniforms: {
-            //         ColorMap: { value: LoadTexture(GameResConfig.m_Background.m_Texture) }
-            //     },
-            //     vertexShader: document.getElementById('costomvertex').textContent,
-            //     fragmentShader: document.getElementById('costomfragment').textContent
-            // });
-            var shaderMaterial = getCashShaderMaterials(GameResConfig.m_Background.m_Texture,{
+            //var geometry = new THREE.PlaneGeometry(w2.x - w1.x, w2.y - w1.y, 1, 1);
+            var shaderMaterial = new THREE.ShaderMaterial({
                 uniforms: {
                     ColorMap: { value: LoadTexture(GameResConfig.m_Background.m_Texture) }
                 },
                 vertexShader: document.getElementById('costomvertex').textContent,
                 fragmentShader: document.getElementById('costomfragment').textContent
-            })
-            var model = new THREE.Mesh(geometry, shaderMaterial);
+            });
+            var model = getSharedPlaneMesh(w2.x - w1.x, w2.y - w1.y,shaderMaterial);
             var offset = new THREE.Vector3(GameResConfig.m_Background.m_PositionOffset[0], GameResConfig.m_Background.m_PositionOffset[1], GameResConfig.m_Background.m_PositionOffset[2])
             model.position.set(offset.x, offset.y, -1000);
             scene.add(model);
@@ -1165,16 +1181,7 @@
             animation.m_RunTime = 0;
             animation.m_FrameLength = time / count;
             animation.m_FrameIndex = 0;
-            // var shaderMaterial = new THREE.ShaderMaterial({
-            //     uniforms: {
-            //         offsetUV: { value: new THREE.Vector4(1.0 / col, -1.0 / row, 0, 0) },
-            //         ColorMap: { value: LoadTexture(res) }
-            //     },
-            //     vertexShader: document.getElementById('uvanivertex').textContent,
-            //     fragmentShader: document.getElementById('costomfragment').textContent,
-            //     transparent: true
-            // });
-            var shaderMaterial = getCashShaderMaterials(res,{
+            var shaderMaterial = new THREE.ShaderMaterial({
                 uniforms: {
                     offsetUV: { value: new THREE.Vector4(1.0 / col, -1.0 / row, 0, 0) },
                     ColorMap: { value: LoadTexture(res) }
@@ -1182,7 +1189,16 @@
                 vertexShader: document.getElementById('uvanivertex').textContent,
                 fragmentShader: document.getElementById('costomfragment').textContent,
                 transparent: true
-            })
+            });
+            // var shaderMaterial = getCashShaderMaterials(res,{
+            //     uniforms: {
+            //         offsetUV: { value: new THREE.Vector4(1.0 / col, -1.0 / row, 0, 0) },
+            //         ColorMap: { value: LoadTexture(res) }
+            //     },
+            //     vertexShader: document.getElementById('uvanivertex').textContent,
+            //     fragmentShader: document.getElementById('costomfragment').textContent,
+            //     transparent: true
+            // })
             animation.material = shaderMaterial;
             return animation;
         }
@@ -1190,9 +1206,11 @@
             obj.position.z = -50;
         }
         function createSpriteAnimation(sprite) {
-            var geometry = new THREE.PlaneGeometry(sprite.m_Width, sprite.m_Height, 1, 1);
+            //var geometry = new THREE.PlaneGeometry(sprite.m_Width, sprite.m_Height, 1, 1);
             var animation = createSpriteAnimationMaterial(sprite.m_Texture, sprite.m_Col, sprite.m_Row, sprite.m_Count, sprite.m_Time, sprite.m_Loop);
-            var model = new THREE.Mesh(geometry, animation.material);
+            //var model = new THREE.Mesh(geometry, animation.material);
+
+            var model = getSharedPlaneMesh(sprite.m_Width, sprite.m_Height,animation.material);
             model.animation = animation;
             model.position.y += sprite.m_Height * 0.5;
             sprite_animation_list.push(model);
@@ -1301,7 +1319,16 @@
         function getCarSpeed() {
             return forword_speed + forword_speed_offset;
         }
-
+        function getSharedPlaneMesh(width,height,mat){
+            if(!window.m_SharedPlaneMesh){
+                var geometry = new THREE.PlaneGeometry(1, 1, 1, 1);
+                window.m_SharedPlaneMesh = new THREE.Mesh(geometry);
+            }
+            var clone = window.m_SharedPlaneMesh.clone();
+            clone.material=mat;
+            clone.scale.set(width,height,1);
+            return clone;
+        }
         function getCashShaderMaterials(texture,shader){
             var shaderMaterial = cash_shader_materials[texture];
             if(!shaderMaterial){
@@ -1443,8 +1470,10 @@
                         m_Type: CacheType.AD
                     }
                     var ad1 = getCachedObject(cache_data);
+                    ad1.visible=true;
                     ad1.m_CachedTag = cache_data;
                     var ad2 = getCachedObject(cache_data);
+                    ad2.visible=true;
                     ad2.m_CachedTag = cache_data;
 
                     setAD(ad1, PositionType.Left);
