@@ -474,14 +474,14 @@
                         m_Height: 651,
                         m_PositionOffset: [-2.625, 0, 0]
                     },
-                    {
-                        m_Type: BuildingType.AD,
-                        m_Position: PositionType.Left,
-                        m_Texture: "res/texture/building/l_b05.png",
-                        m_Width: 307,
-                        m_Height: 693,
-                        m_PositionOffset: [-0.875, 0, 0]
-                    },
+                    // {
+                    //     m_Type: BuildingType.AD,
+                    //     m_Position: PositionType.Left,
+                    //     m_Texture: "res/texture/building/l_b05.png",
+                    //     m_Width: 307,
+                    //     m_Height: 693,
+                    //     m_PositionOffset: [-0.875, 0, 0]
+                    // },
                     {
                         m_Type: BuildingType.AD,
                         m_Position: PositionType.Left,
@@ -498,22 +498,22 @@
                         m_Height: 585,
                         m_PositionOffset: [-5.25, 0, 0]
                     },
-                    {
-                        m_Type: BuildingType.AD,
-                        m_Position: PositionType.Left,
-                        m_Texture: "res/texture/building/l_b08.png",
-                        m_Width: 220,
-                        m_Height: 740,
-                        m_PositionOffset: [-3.5, 0, 0]
-                    },
-                    {
-                        m_Type: BuildingType.AD,
-                        m_Position: PositionType.Left,
-                        m_Texture: "res/texture/building/l_b09.png",
-                        m_Width: 314,
-                        m_Height: 680,
-                        m_PositionOffset: [-1.75, 0, 0]
-                    },
+                    // {
+                    //     m_Type: BuildingType.AD,
+                    //     m_Position: PositionType.Left,
+                    //     m_Texture: "res/texture/building/l_b08.png",
+                    //     m_Width: 220,
+                    //     m_Height: 740,
+                    //     m_PositionOffset: [-3.5, 0, 0]
+                    // },
+                    // {
+                    //     m_Type: BuildingType.AD,
+                    //     m_Position: PositionType.Left,
+                    //     m_Texture: "res/texture/building/l_b09.png",
+                    //     m_Width: 314,
+                    //     m_Height: 680,
+                    //     m_PositionOffset: [-1.75, 0, 0]
+                    // },
                     {
                         m_Type: BuildingType.AD,
                         m_Position: PositionType.Right,
@@ -522,20 +522,20 @@
                         m_Height: 375,
                         m_PositionOffset: [5.6875, 0, 0]
                     },
-                    {
-                        m_Type: BuildingType.AD,
-                        m_Position: PositionType.Right,
-                        m_Texture: "res/texture/building/r_b02.png",
-                        m_Width: 321,
-                        m_Height: 375,
-                        m_PositionOffset: [5.6875, 0, 0]
-                    },
+                    // {
+                    //     m_Type: BuildingType.AD,
+                    //     m_Position: PositionType.Right,
+                    //     m_Texture: "res/texture/building/r_b02.png",
+                    //     m_Width: 321,
+                    //     m_Height: 375,
+                    //     m_PositionOffset: [5.6875, 0, 0]
+                    // },
                     {
                         m_Type: BuildingType.AD,
                         m_Position: PositionType.Right,
                         m_Texture: "res/texture/building/r_b03.png",
-                        m_Width: 472,
-                        m_Height: 413,
+                        m_Width: 246,
+                        m_Height: 701,
                         m_PositionOffset: [0, 0, 0]
                     },
                     {
@@ -546,14 +546,14 @@
                         m_Height: 1170,
                         m_PositionOffset: [3.9375, 0, 0]
                     },
-                    {
-                        m_Type: BuildingType.AD,
-                        m_Position: PositionType.Right,
-                        m_Texture: "res/texture/building/r_b05.png",
-                        m_Width: 246,
-                        m_Height: 701,
-                        m_PositionOffset: [0, 0, 0]
-                    }
+                    // {
+                    //     m_Type: BuildingType.AD,
+                    //     m_Position: PositionType.Right,
+                    //     m_Texture: "res/texture/building/r_b05.png",
+                    //     m_Width: 246,
+                    //     m_Height: 701,
+                    //     m_PositionOffset: [0, 0, 0]
+                    // }
                 ]
             }
         }
@@ -1515,7 +1515,7 @@
                 }
             }
             if (create_new_left_ad) {
-                var index = parseInt(Math.random() * GameResConfig.m_Buildings.m_Data.length);
+                var index = Math.floor(Math.random() * GameResConfig.m_Buildings.m_Data.length);
                
                 var cache_data = {
                     m_Res: GameResConfig.m_Buildings.m_Data[index],
@@ -1648,6 +1648,7 @@
                 gaming = false;
                 set_score();
                 pause_loop();
+                enginePalyPause(false);
                 if (PlayScoreCofing.revive <= 0) {
                     set_revive_gray();
                 }
@@ -2172,7 +2173,9 @@
 
                     })
                     setTimeout(() => {
-                        show_money_rain()
+                        palyEffectAudio(GameResConfig.m_Audio.m_Pour);
+                        //enginePalyPause(false);
+                        show_money_rain();
                     }, 4000);
 
                 }
@@ -2197,8 +2200,6 @@
                     }, 0);
                 } else {
                     this.set_palyer_score('enery_num', palyer_score.enery);
-                    //play_audio('audio_pour');
-                    palyEffectAudio(GameResConfig.m_Audio.m_Pour);
                     show_money_rain();
                 }
                 //console.log(palyer_score.enery,money_rain.show);

@@ -142,12 +142,15 @@ p{
     left: 3.787rem;
 }
 
-.rank_view{
+.rank_box{
     position: absolute;
     width: 8.6852rem;
     height: 13.8519rem;
     top: 2.1296rem;
     left: 0.6574rem;
+    background-image: url(res/texture/rank/rank.png);
+    background-size: 100% 100%;
+    background-repeat: no-repeat;
 }
 
 .rank_close{
@@ -171,20 +174,20 @@ p{
     display: flex;
     display: -webkit-box;
     display: -webkit-flex;
+    position: relative;
     width: 8rem;
     height: 1.5185rem;
     line-height: 1.5185rem;
     margin-top: 0.1852rem;
     background-image: url(res/texture/rank/mingcihangbg.png);
     background-repeat: no-repeat;
-    background-position: 100% 100%;
 }
 
 .rank_img{
     position: absolute;
     width: 1.1667rem;
     height: 1.1667rem;
-    left: 1.1944rem;
+    left: 1.13rem;
     top: 0.1852rem;
 }
 
@@ -192,12 +195,14 @@ p{
     position: absolute;
     width: 0.9352rem;
     height: 0.787rem;
-    left: 0.8704rem;
+    left: 0.6604rem;
     top: -0.1852rem;
     z-index: 99;
 }
 
 .rank_num{
+    width: 0.713rem;
+    height: 1.5185rem;
     margin-left: 0.463rem;
     font-size: 0.4074rem;
     color: #fff;
@@ -207,17 +212,19 @@ p{
     width: 1.1204rem;
     height: 1.1204rem;
     margin-top: 0.1944rem;
-    margin-left: 0.4167rem;
+    
 }
 
 .rank_palyer{
     margin-left: 0.1667rem;
-    width: 2.5926rem;
-    font-size: 0.2778rem;
+    width: 3rem;
+    height: 1.5185rem;
+    font-size: 0.1481rem;
     color: #375270;
 }
 
 .rank_score{
+    height: 1.5185rem;
     font-size: 0.3148rem;
     color: #1796a9;
 }

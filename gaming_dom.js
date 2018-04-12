@@ -41,6 +41,7 @@ function set_over() {
         if (PlayScoreCofing.revive > 0) {
             hidden_node('over');
             show_node('gg');
+            enginePalyPause(true);
         }
     })
 }
