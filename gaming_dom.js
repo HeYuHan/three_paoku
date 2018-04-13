@@ -153,9 +153,11 @@ function play_audio_auto() {
             });
         }, false);
     }
-    // var ua = navigator.userAgent.toLowerCase();
-    // if (!ua.match(/MicroMessenger/i)) {
-    // }
+    var ua = navigator.userAgent.toLowerCase();
+    if (!ua.match(/MicroMessenger/i)) {
+        wx_ready = true;
+        check_ready();
+    }
     active_audio();
     return false;
 }
