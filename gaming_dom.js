@@ -142,20 +142,21 @@ function play_audio_auto() {
         WeixinJSBridge.invoke('getNetworkType', {}, function (e) {
             wx_ready = true;
             check_ready();
+            
         }, false);
     } else {
         document.addEventListener("WeixinJSBridgeReady", function () {
             WeixinJSBridge.invoke('getNetworkType', {}, function (e) {
                 wx_ready = true;
                 check_ready();
+                
             });
         }, false);
     }
-    var ua = navigator.userAgent.toLowerCase();
-    if (!ua.match(/MicroMessenger/i)) {
-        wx_ready = true;
-        check_ready();
-    }
+    // var ua = navigator.userAgent.toLowerCase();
+    // if (!ua.match(/MicroMessenger/i)) {
+    // }
+    active_audio();
     return false;
 }
 
